@@ -26,7 +26,6 @@ steps:
       name: Validate Parameters
       command: |
         missing_params=""
-        
         if [ -z "<<parameters.git_email>>" ]; then
           missing_params="${missing_params} git_email"
         fi
@@ -45,7 +44,6 @@ steps:
         if [ -z "<<parameters.project_name>>" ]; then
           missing_params="${missing_params} project_name"
         fi
-        
         if [ ! -z "$missing_params" ]; then
           echo "Error: Publish Docs Orb - Missing parameters:$missing_params"
           exit 1

@@ -48,4 +48,5 @@ steps:
       label: << parameters.label >>
       description: << parameters.description >>
   - build_docusaurus:
+      target_repo: << parameters.target_repo >>
       target_directory: "~/target_repo"

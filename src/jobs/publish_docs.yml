@@ -21,12 +21,15 @@ parameters:
   target_repo:
     type: string
     default: ""
+    description: "The GitHub URL of the target repository where the documentation resides."
   git_username:
     type: string
     default: ""
+    description: "The Git username for commit and push operations."
   git_email:
     type: string
     default: ""
+    description: "The Git email for commit and push operations."
 steps:
   - validate_params:
       git_email: <<parameters.git_email>>
@@ -44,5 +47,7 @@ steps:
       source_docs_path: << parameters.source_docs_path >>
       label: << parameters.label >>
       description: << parameters.description >>
-  - build_docusaurus
+  - build_docusaurus:
+      target_repo: << parameters.target_repo >>
+      target_directory: "~/target_repo"
   - commit_and_push

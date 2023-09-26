@@ -4,6 +4,10 @@ parameters:
     type: string
     default: "~/target_repo"
     description: "The path to the target repository where the documentation resides."
+  parameters:
+    target_repo:
+      type: string
+      description: "The target repository for the documentation"
 steps:
   - run:
       name: Run Docusaurus Build

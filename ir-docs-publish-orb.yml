@@ -1,0 +1,182 @@
+version: 2.1
+
+description: >
+  An orb to merge docusaurus docs from several repos.
+
+commands:
+  install_git:
+    description: "Installs Git on the CI environment."
+    steps:
+      - run:
+          name: Install Git
+          command: |
+            # Update package lists and install Git
+            sudo apt-get update || { echo "apt-get update failed"; exit 1; }
+            sudo apt-get install -y git || { echo "Git installation failed"; exit 1; }
+
+  setup_git:
+    description: "Configures Git for commit and push operations."
+    parameters:
+      git_username:
+        type: string
+        description: "Username for Git configuration."
+      git_email:
+        type: string
+        description: "Email for Git configuration."
+    steps:
+      - run:
+          name: Setup Git
+          command: |
+            # Configure Git username and email
+            git config --global user.name "<< parameters.git_username >>" || { echo "Git username configuration failed"; exit 1; }
+            git config --global user.email "<< parameters.git_email >>" || { echo "Git email configuration failed"; exit 1; }
+
+  clone_target:
+    description: "Clone the target documentation repository."
+    parameters:
+      target_repo:
+        type: string
+        description: "The GitHub repository URL where the documentation resides."
+    steps:
+      - run:
+          name: Clone target repository
+          command: git clone << parameters.target_repo >> ~/target_repo || { echo "Git clone failed"; exit 1; }
+
+  copy_docs_to_target:
+    description: "Clones a docusaurus repo and adds the docs from the current repo to it."
+    parameters:
+      project_name:
+        type: string
+        default: ""
+        description: "The path where these documents will be located on the docs site: (i.e. /docs/{package-name}/getting-started.md)"
+      source_docs_path:
+        type: string
+        default: "./docs"
+        description: "The path to the directory containing the markdown files. Defaults to './docs'."
+      target_docs_path:
+        type: string
+        default: "./docs"
+        description: "The path to the directory containing the markdown files. Defaults to './docs'."
+      label:
+        type: string
+        default: "package-name"
+        description: "The label that will appear in the sidebar of the docs site. Should be the full name of the package in Title Case. (i.e. Ignite CLI, or React Native MLKit)."
+      description:
+        type: string
+        default: ""
+        description: "Short description of the package used in indexes etc."
+    steps:
+      - run:
+          name: Check if docs exist
+          command: |
+            if [ ! "$(ls -A << parameters.source_docs_path >>)" ]; then
+              echo "Error: No files found in docs directory."
+              exit 1
+            fi
+      - run:
+          name: Copy docs to target repository
+          command: |
+            cp -R << parameters.source_docs_path >> ~/target_repo/<<parameters.target_docs_path>>/<< parameters.project_name >>
+      - run:
+          name: Move static content to appropriate folder
+          command: |
+            if [ "$(ls -A ~/target_repo/docs/<< parameters.project_name >>/static)" ]; then
+              mv ~/target_repo/docs/<< parameters.project_name >>/static ~/target_repo/static/<< parameters.project_name >>/
+            else
+              echo "No static files to copy."
+            fi
+
+      - run:
+          name: Create _category_.json
+          command: >
+            echo '{
+              "label": "<< parameters.label >>",
+              "link": {
+                "type": "generated-index",
+                "description": "<< parameters.description >>"
+              }
+            }' > ~/target_repo/docs/<< parameters.project_name >>/_category_.json
+  commit_and_push:
+    description: "Commits and pushes the updated documentation to the docs repository."
+    steps:
+      - run:
+          name: Parse commit message and PR number
+          command: |
+            # Extract the last commit message and look for a PR number
+            COMMIT_MESSAGE=$(git log -1 --pretty=%B) || { echo "Fetching commit message failed"; exit 1; }
+            COMMIT_HASH=$(git rev-parse HEAD) || { echo "Fetching commit hash failed"; exit 1; }
+            REPO_URL=$(git config --get remote.origin.url) || { echo "Fetching repo URL failed"; exit 1; }
+            REPO_NAME=$(basename -s .git $REPO_URL) || { echo "Parsing repo name failed"; exit 1; }
+  
+            PR_NUMBER=$(echo $COMMIT_MESSAGE | grep -oP "(#\K\d+)")
+            if [ ! -z "$PR_NUMBER" ]; then
+              PR_LINK="https://github.com/infinitered/$REPO_NAME/pull/$PR_NUMBER"
+              FINAL_COMMIT_MESSAGE="$REPO_NAME -- $COMMIT_MESSAGE -- $PR_LINK"
+            else
+              COMMIT_LINK="https://github.com/infinitered/$REPO_NAME/commit/$COMMIT_HASH"
+              FINAL_COMMIT_MESSAGE="$REPO_NAME -- $COMMIT_MESSAGE -- $COMMIT_LINK"
+            fi
+            echo "export FINAL_COMMIT_MESSAGE=\"$FINAL_COMMIT_MESSAGE\"" >> $BASH_ENV || { echo "Exporting FINAL_COMMIT_MESSAGE failed"; exit 1; }
+      - run:
+          name: Commit and push to target repository
+          command: |
+            cd ~/target_repo || { echo "Changing directory failed"; exit 1; }
+            git add . || { echo "Git add failed"; exit 1; }
+            git commit -m "$FINAL_COMMIT_MESSAGE" || { echo "Git commit failed"; exit 1; }
+            git push origin main || { echo "Git push failed"; exit 1; }
+
+jobs:
+  publish_docs:
+    description: "The main job that orchestrates the documentation update process."
+    docker:
+      - image: cimg/node:16.13
+    parameters:
+      project_name:
+        type: string
+        default: ""
+        description: "The name of the package. Defaults to the repository name if empty."
+      source_docs_path:
+        type: string
+        default: "./docs"
+        description: "The path to the ir-docs folder in the repository. Defaults to './ir-docs'."
+      label:
+        type: string
+        default: ""
+        description: "The label for this section that will appear in the sidebar."
+      description:
+        type: string
+        default: ""
+        description: "The description of the category that this documentation where these docs will live in the sidebar."
+      target_repo:
+        type: string
+        default: ""
+      git_username:
+        type: string
+        default: ""
+      git_email:
+        type: string
+        default: ""
+    steps:
+      - checkout
+      - install_git
+      - setup_git:
+          git_username: << parameters.git_username >>
+          git_email: << parameters.git_email >>
+
+      - clone_target:
+          target_repo: <<parameters.target_repo>>
+
+      - copy_docs_to_target:
+          project_name: << parameters.project_name >>
+          source_docs_path: << parameters.source_docs_path >>
+          label: << parameters.label >>
+          description: << parameters.description >>
+      - commit_and_push
+
+orbs:
+  node: circleci/node@5.1.0
+
+workflows:
+  publish:
+    jobs:
+      - publish_docs

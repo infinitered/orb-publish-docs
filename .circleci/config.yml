@@ -1,4 +1,11 @@
 version: 2.1
+
+parameters:
+  run-integration-tests:
+    type: boolean
+    default: false
+
+
 setup: true
 orbs:
   orb-tools: circleci/orb-tools@12.0

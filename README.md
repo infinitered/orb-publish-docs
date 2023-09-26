@@ -34,13 +34,15 @@ repository.
 
 ## Parameters
 
-- `git_email` (String): Email for Git configuration.
-- `git_username` (String): Username for Git configuration.
-- `target_repo` (String): The GitHub repository URL where the documentation resides.
-- `description` (String): Short description of the package used in indexes etc. (Default: "")
-- `label` (String): The label that will appear in the sidebar. (Default: "package-name")
-- `project_name` (String): The path where documents will be located on the docs site. (Default: "")
-- `source_docs_path` (String): The path to the source docs directory. (Default: "./docs")
+| Parameter         | Type   | Description                                                                                     |
+|-------------------|--------|-------------------------------------------------------------------------------------------------|
+| `git_email`       | String | Email for Git configuration.                                                                     |
+| `git_username`    | String | Username for Git configuration.                                                                  |
+| `target_repo`     | String | The GitHub repository URL where the documentation resides.                                       |
+| `description`     | String | Short description of the package used in indexes etc. Default is an empty string.                |
+| `label`           | String | The label that will appear in the sidebar of the docs site. Default is "package-name".           |
+| `project_name`    | String | The path where these documents will be located on the docs site. Default is an empty string.     |
+| `source_docs_path`| String | The path to the directory containing the source markdown files. Default is "./docs".              |
 
 ## Basic Example
 
@@ -64,3 +66,137 @@ workflows:
           project_name: "example-package"
           source_docs_path: "./example-docs"
 ```
+
+### Handling Static Files
+
+In your source repository, static files such as images should be placed in a directory named `_static_` under
+your `docs` folder. The directory structure will look like this when you run the `tree` command:
+
+```plaintext
+docs/
+├── part-one.md
+├── part-two.md
+└── _static_
+└── image.png
+```
+
+During the documentation merge process, the orb will automatically move the contents of `_static_` to the appropriate
+location in the target repository.
+
+#### Directory Structure Before and After Merge
+
+**Before Merge:**
+
+```plaintext
+source-repo/
+└── docs/
+│ ├── part-one.md
+│ └── part-two.md
+└── _static_/
+    └── image.png
+```
+**After Merge:**
+
+```
+target-repo/
+├── docs/
+│ └── <<project-name>>
+│ ├── part-one.md
+│ └── part-two.md
+└── static/
+    └── <<project-name>>
+    └── image.png
+```
+
+By following this convention, you ensure that all static files and documents are correctly placed in the target
+repository, under `docs/<<project-name>>` for documents and `static/<<project-name>>` for static files.
+
+## Commands
+
+### `clone_target`
+
+#### Description
+
+Clones the target documentation repository to `~/target_repo`.
+
+#### Parameters
+
+| Parameter   | Type   | Description                                                       |
+|-------------|--------|-------------------------------------------------------------------|
+| `target_repo`| String| The GitHub repository URL where the documentation resides.        |
+
+---
+
+### `commit_and_push`
+
+#### Description
+
+Commits and pushes the updated documentation to the target repository.
+
+#### Parameters
+
+None
+
+---
+
+### `copy_docs_to_target`
+
+#### Description
+
+Clones a Docusaurus repo and adds the docs from the current repo to the target repository.
+
+#### Parameters
+
+| Parameter       | Type   | Description                                                                 |
+|-----------------|--------|-----------------------------------------------------------------------------|
+| `description`   | String | Short description of the package. Default is an empty string.                |
+| `label`         | String | The label for the sidebar. Default is "package-name".                        |
+| `project_name`  | String | The path where the documents will be located on the docs site.               |
+| `source_docs_path`| String | The path to the directory containing the source markdown files. Default is "./docs".|
+| `target_docs_path`| String | The path to the directory in the target repo where docs will be copied. Default is "./docs".|
+
+---
+
+### `install_git`
+
+#### Description
+
+Installs Git on the CI environment.
+
+#### Parameters
+
+None
+
+---
+
+### `setup_git`
+
+#### Description
+
+Configures Git for commit and push operations.
+
+#### Parameters
+
+| Parameter   | Type   | Description             |
+|-------------|--------|-------------------------|
+| `git_email`  | String | Email for Git configuration.|
+| `git_username`| String | Username for Git configuration.|
+
+---
+
+### `validate_params`
+
+#### Description
+
+Validates that all required parameters are set.
+
+#### Parameters
+
+| Parameter       | Type   | Description                                                                 |
+|-----------------|--------|-----------------------------------------------------------------------------|
+| `description`   | String | Short description of the package.                                            |
+| `git_email`     | String | Email for Git configuration.                                                 |
+| `git_username`  | String | Username for Git configuration.                                              |
+| `label`         | String | The label for the sidebar.                                                   |
+| `project_name`  | String | The path where the documents will be located on the docs site.               |
+| `target_repo`   | String | The GitHub repository URL where the documentation resides.                   |

@@ -1,0 +1,15 @@
+description: "Configures Git for commit and push operations."
+parameters:
+  git_username:
+    type: string
+    description: "Username for Git configuration."
+  git_email:
+    type: string
+    description: "Email for Git configuration."
+steps:
+  - run:
+      name: Setup Git
+      command: |
+        # Configure Git username and email
+        git config --global user.name "<< parameters.git_username >>" || { echo "Git username configuration failed"; exit 1; }
+        git config --global user.email "<< parameters.git_email >>" || { echo "Git email configuration failed"; exit 1; }

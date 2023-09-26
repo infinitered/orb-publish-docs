@@ -1,0 +1,45 @@
+description: "The main job that orchestrates the documentation update process."
+docker:
+  - image: cimg/node:16.13
+parameters:
+  project_name:
+    type: string
+    default: ""
+    description: "The name of the package. Defaults to the repository name if empty."
+  source_docs_path:
+    type: string
+    default: "./docs"
+    description: "The path to the ir-docs folder in the repository. Defaults to './ir-docs'."
+  label:
+    type: string
+    default: ""
+    description: "The label for this section that will appear in the sidebar."
+  description:
+    type: string
+    default: ""
+    description: "The description of the category that this documentation where these docs will live in the sidebar."
+  target_repo:
+    type: string
+    default: ""
+  git_username:
+    type: string
+    default: ""
+  git_email:
+    type: string
+    default: ""
+steps:
+  - checkout
+  - install_git
+  - setup_git:
+      git_username: << parameters.git_username >>
+      git_email: << parameters.git_email >>
+
+  - clone_target:
+      target_repo: <<parameters.target_repo>>
+
+  - copy_docs_to_target:
+      project_name: << parameters.project_name >>
+      source_docs_path: << parameters.source_docs_path >>
+      label: << parameters.label >>
+      description: << parameters.description >>
+  - commit_and_push

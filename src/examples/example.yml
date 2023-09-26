@@ -1,0 +1,18 @@
+description: >
+  Basic usage of the publish-docs orb.
+
+usage:
+  version: 2.1
+  orbs:
+    publish-docs: infinitered/publish-docs@0.1.0  # Replace with the actual version of your orb
+  workflows:
+    publish_to_docs_site:
+      jobs:
+        - publish-docs/publish_docs:
+            git_email: "your-email@example.com"
+            git_username: "your-username"
+            target_repo: "https://github.com/your-organization/your-docs-repo.git"
+            description: "My very special package."
+            label: "My Very Special Package"
+            project_name: "my-very-special-package"
+            source_docs_path: "./optional-docs-path"

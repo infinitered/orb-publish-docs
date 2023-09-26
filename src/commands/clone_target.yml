@@ -1,9 +1,0 @@
-description: "Clone the target documentation repository."
-parameters:
-  target_repo:
-    type: string
-    description: "The GitHub repository URL where the documentation resides."
-steps:
-  - run:
-      name: Clone target repository
-      command: git clone << parameters.target_repo >> ~/target_repo || { echo "Git clone failed"; exit 1; }

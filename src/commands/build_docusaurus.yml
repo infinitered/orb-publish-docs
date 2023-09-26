@@ -1,0 +1,14 @@
+description: "Runs the Docusaurus build script to ensure that the documentation builds without errors."
+parameters:
+  target_directory:
+    type: string
+    default: "~/target_repo"
+    description: "The path to the target repository where the documentation resides."
+steps:
+  - run:
+      name: Run Docusaurus Build
+      command: |
+        echo "Changing to target directory: <<parameters.target_repo>>"
+        cd <<parameters.target_repo>> || { echo "Changing directory failed"; exit 1; }
+        echo "Running Docusaurus build..."
+        yarn build || { echo "Docusaurus build failed"; exit 1; }

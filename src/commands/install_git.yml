@@ -1,8 +1,0 @@
-description: "Installs Git on the CI environment."
-steps:
-  - run:
-      name: Install Git
-      command: |
-        # Update package lists and install Git
-        sudo apt-get update || { echo "apt-get update failed"; exit 1; }
-        sudo apt-get install -y git || { echo "Git installation failed"; exit 1; }

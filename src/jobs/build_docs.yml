@@ -1,4 +1,4 @@
-description: "The main job that orchestrates the documentation update process."
+description: "Test the documentation without pushing changes."
 docker:
   - image: cimg/node:16.13
 parameters:
@@ -21,12 +21,15 @@ parameters:
   target_repo:
     type: string
     default: ""
+    description: "The GitHub URL of the target repository where the documentation resides."
   git_username:
     type: string
     default: ""
+    description: "The Git username for commit and push operations."
   git_email:
     type: string
     default: ""
+    description: "The Git email for commit and push operations."
 steps:
   - validate_params:
       git_email: <<parameters.git_email>>
@@ -44,5 +47,5 @@ steps:
       source_docs_path: << parameters.source_docs_path >>
       label: << parameters.label >>
       description: << parameters.description >>
-  - build_docusaurus
-  - commit_and_push
+  - build_docusaurus:
+      target_directory: "~/target_repo"

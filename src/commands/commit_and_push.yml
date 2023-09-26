@@ -1,4 +1,6 @@
-description: "Commits and pushes the updated documentation to the docs repository."
+description: >
+  "Commits and pushes the updated documentation to the docs repository."
+
 steps:
   - run:
       name: Parse commit message and PR number

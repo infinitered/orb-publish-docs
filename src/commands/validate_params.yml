@@ -1,0 +1,52 @@
+description: >
+  "Validate that all required parameters are set"
+
+parameters:
+  git_email:
+    description: "Email for Git configuration."
+    type: string
+  git_username:
+    description: "Username for Git configuration."
+    type: string
+  target_repo:
+    description: "The GitHub repository URL where the documentation resides."
+    type: string
+  description:
+    description: "Short description of the package used in indexes etc."
+    type: string
+  label:
+    description: "The label that will appear in the sidebar of the docs site."
+    type: string
+  project_name:
+    description: "The path where these documents will be located on the docs site."
+    type: string
+
+steps:
+  - run:
+      name: Validate Parameters
+      command: |
+        missing_params=""
+        
+        if [ -z "<<parameters.git_email>>" ]; then
+          missing_params="${missing_params} git_email"
+        fi
+        if [ -z "<<parameters.git_username>>" ]; then
+          missing_params="${missing_params} git_username"
+        fi
+        if [ -z "<<parameters.target_repo>>" ]; then
+          missing_params="${missing_params} target_repo"
+        fi
+        if [ -z "<<parameters.description>>" ]; then
+          missing_params="${missing_params} description"
+        fi
+        if [ -z "<<parameters.label>>" ]; then
+          missing_params="${missing_params} label"
+        fi
+        if [ -z "<<parameters.project_name>>" ]; then
+          missing_params="${missing_params} project_name"
+        fi
+        
+        if [ ! -z "$missing_params" ]; then
+          echo "Error: Publish Docs Orb - Missing parameters:$missing_params"
+          exit 1
+        fi

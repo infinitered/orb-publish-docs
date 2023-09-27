@@ -1,4 +1,4 @@
-#!/usr/bin/env bats
+#! /bin/bash
 
 export TEST_DIR="$(pwd)/test_docs_dir_with_files"
 

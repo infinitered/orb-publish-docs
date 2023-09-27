@@ -1,4 +1,4 @@
-#!/usr/bin/env bats
+#! /bin/bash
 
 # Mock yarn build command to just echo the arguments
 yarn() {

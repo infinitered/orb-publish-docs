@@ -1,4 +1,4 @@
-#!/usr/bin/env bats
+#! /bin/bash
 
 # Mock git command to just echo the arguments
 git() {

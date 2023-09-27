@@ -55,6 +55,7 @@ source ./src/scripts/parse_commit_info.sh
   export PR_NUMBER=42
   # shellcheck disable=SC2030
   export REPO_NAME="sample-repo"
+  export COMMIT_MESSAGE="Fix: Commit for testing (#42)"
 
   run ConstructCommitMessage
   echo "Debug: Output = '$output'"  # Verbose log
@@ -62,6 +63,7 @@ source ./src/scripts/parse_commit_info.sh
   [[ $output =~ orb:\ sample-repo\ --\ Fix:\ Commit\ for\ testing\ #42\ --\ https://github.com/infinitered/sample-repo/pull/42 ]]
   unset PR_NUMBER
   unset REPO_NAME
+  unset COMMIT_MESSAGE
 }
 
 @test "It constructs commit link and commit message when PR number is absent" {
@@ -78,6 +80,7 @@ source ./src/scripts/parse_commit_info.sh
   [[ $output =~ orb:\ sample-repo\ --\ Fix:\ Commit\ for\ testing\ --\ https://github.com/infinitered/sample-repo/commit/1234567890abcdef ]]
   unset REPO_NAME
   unset COMMIT_HASH
+  unset COMMIT_MESSAGE
 }
 
 @test "It parses and constructs the final commit message" {

@@ -5,7 +5,7 @@ git() {
   echo "$@"
 }
 
-export $WORKING_DIR="."
+export WORKING_DIR="."
 
 
 # Mock cd command to just echo the directory

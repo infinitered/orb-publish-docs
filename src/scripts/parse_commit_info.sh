@@ -6,7 +6,7 @@ ParseCommitInfo() {
   COMMIT_HASH=$(git rev-parse HEAD) || { echo "Fetching commit hash failed"; exit 1; }
   REPO_URL=$(git config --get remote.origin.url) || { echo "Fetching repo URL failed"; exit 1; }
   REPO_NAME=$(basename -s .git "$REPO_URL") || { echo "Parsing repo name failed"; exit 1; }
-  PR_NUMBER=$(echo "$COMMIT_MESSAGE" | grep -oP "(#\K\d+)")
+  PR_NUMBER=$(echo "$COMMIT_MESSAGE" | grep -oP "(#\K\d+)" || true)
 
   if [ -n "$PR_NUMBER" ]; then
     PR_LINK="https://github.com/infinitered/$REPO_NAME/pull/$PR_NUMBER"
@@ -22,4 +22,3 @@ ParseCommitInfo() {
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   ParseCommitInfo
 fi
-

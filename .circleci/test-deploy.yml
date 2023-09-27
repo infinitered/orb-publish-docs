@@ -4,7 +4,7 @@ orbs:
   # Reference your orb's jobs and commands below as they will exist when built.
   orb-tools: circleci/orb-tools@12.0
   # The orb definition is intentionally not included here. It will be injected into the pipeline.
-  <orb-name>: {}
+  <orb-name>: { }
 
 # Use this tag to ensure test jobs always run,
 # even though the downstream publish job will only run on release tags.
@@ -27,8 +27,25 @@ jobs:
       - image: cimg/base:current
     steps:
       - checkout
-      # Run your orb's commands to validate them.
-      - <orb-name>/greet
+      - run:
+          name: Set Environment Variables
+          environment:
+            USE_MOCKS: "true"
+          command: echo "Environment variables set."
+      - run:
+          name: Run BATS tests
+          command: |
+            # Install Bats if needed
+            if ! command -v bats &> /dev/null
+            then
+              echo "Installing Bats"
+              git clone https://github.com/bats-core/bats-core.git
+              cd bats-core
+              sudo ./install.sh /usr/local
+              cd ..
+            fi
+            # Run Bats tests
+            bats ./src/tests/*.bats
 workflows:
   test-deploy:
     jobs:
@@ -40,12 +57,12 @@ workflows:
       - orb-tools/pack:
           filters: *release-filters
       - orb-tools/publish:
-          orb_name: <namespace>/<orb-name>
+          orb_name: infinitered/docs-publish
           vcs_type: << pipeline.project.type >>
           pub_type: production
           # Ensure this job requires all test jobs and the pack job.
           requires:
             - orb-tools/pack
             - command-test
-          context: <publishing-context>
+          context: orb-publishing
           filters: *release-filters

@@ -1,14 +1,14 @@
 description: "Test the documentation without pushing changes."
-docker:
-  - image: cimg/node:16.13
+executor: node/default
+working_directory: $HOME
 parameters:
   project_name:
     type: string
     default: ""
     description: "The name of the package. Defaults to the repository name if empty."
-  source_docs_path:
+  source_docs_dir:
     type: string
-    default: "./docs"
+    default: "docs"
     description: "The path to the ir-docs folder in the repository. Defaults to './ir-docs'."
   label:
     type: string
@@ -21,7 +21,7 @@ parameters:
   target_repo:
     type: string
     default: ""
-    description: "The GitHub URL of the target repository where the documentation resides."
+    description: "The GitHub SSH URL of the target repository where the documentation resides."
   git_username:
     type: string
     default: ""
@@ -30,6 +30,14 @@ parameters:
     type: string
     default: ""
     description: "The Git email for commit and push operations."
+  target_repo_directory:
+    type: string
+    default: "target"
+    description: "The directory where the clone of the target repo has been cloned."
+  source_repo_directory:
+    type: string
+    default: "source"
+    description: "The directory where the clone of the source repo has been cloned."
 steps:
   - validate_params:
       git_email: <<parameters.git_email>>
@@ -38,14 +46,22 @@ steps:
       description: <<parameters.description>>
       label: <<parameters.label>>
       project_name: <<parameters.project_name>>
-  - clone_required_repos:
-      git_email: << parameters.git_email >>
-      git_username: << parameters.git_username >>
-      target_repo: << parameters.target_repo >>
-  - copy_docs_to_target:
-      project_name: << parameters.project_name >>
-      source_docs_path: << parameters.source_docs_path >>
-      label: << parameters.label >>
-      description: << parameters.description >>
-  - build_docusaurus:
-      target_directory: "~/target_repo"
+  - run:
+      name: Set Environment Variables
+      environment:
+        DESCRIPTION: <<parameters.description>>
+        FULL_SOURCE_DOCS_PATH: $HOME/<<parameters.source_repo_directory>>/<<parameters.source_docs_dir>>
+        GIT_EMAIL: <<parameters.git_email>>
+        GIT_USERNAME: <<parameters.git_username>>
+        LABEL: <<parameters.label>>
+        PROJECT_NAME: <<parameters.project_name>>
+        SOURCE_DOCS_DIR: <<parameters.source_docs_dir>>
+        SOURCE_REPO_DIRECTORY: $HOME/<<parameters.source_repo_directory>>
+        TARGET_REPO: <<parameters.target_repo>>
+        TARGET_REPO_DIRECTORY: $HOME/<<parameters.target_repo_directory>>
+      command: echo "Environment variables set."
+  - clone_required_repos
+  - install_and_cache_yarn_dependencies:
+      working_directory: $HOME/<<parameters.target_repo_directory>>
+  - copy_docs_to_target
+  - build_docusaurus

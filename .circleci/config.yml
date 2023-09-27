@@ -3,35 +3,13 @@ setup: true
 orbs:
   orb-tools: circleci/orb-tools@12.0
   shellcheck: circleci/shellcheck@3.1
+  bats: circleci/bats@1.0
 
 filters: &filters
   tags:
     only: /.*/
 
 workflows:
-  # Prior to producing a development orb (which requires credentials) basic validation, linting, and even unit testing can be performed.
-  # This workflow will run on every commit
-  test-pack:
-    unless: << pipeline.parameters.run-integration-tests >>
-    jobs:
-      - orb-tools/lint # Lint Yaml files
-      - orb-tools/pack # Pack orb source
-      # Publish development version(s) of the orb.
-      - orb-tools/publish-dev:
-          orb-name: infinitered/publish-docs
-          context: orb-publishing # A restricted context containing your private publishing credentials. Will only execute if approved by an authorized user.
-          requires:
-            - orb-tools/lint
-            - orb-tools/pack
-            - bats/run
-            - shellcheck/check
-      # Trigger an integration workflow to test the
-      # dev:${CIRCLE_SHA1:0:7} version of your orb
-      - orb-tools/trigger-integration-tests-workflow:
-          name: trigger-integration-dev
-          context: orb-publishing
-          requires:
-            - orb-tools/publish-dev
   lint-pack:
     jobs:
       - orb-tools/lint:
@@ -44,8 +22,8 @@ workflows:
           filters: *filters
       # Triggers the next workflow in the Orb Development Kit.
       - orb-tools/continue:
-          pipeline_number:  << pipeline.number >>
+          pipeline_number: << pipeline.number >>
           vcs_type: << pipeline.project.type >>
-          orb_name: <orb-name>
-          requires: [orb-tools/lint, orb-tools/pack, orb-tools/review, shellcheck/check]
+          orb_name: infinitered/docs-publish
+          requires: [ orb-tools/lint, orb-tools/pack, orb-tools/review, shellcheck/check ]
           filters: *filters

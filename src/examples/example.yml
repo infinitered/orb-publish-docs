@@ -15,4 +15,4 @@ usage:
             description: "My very special package."
             label: "My Very Special Package"
             project_name: "my-very-special-package"
-            source_docs_path: "./optional-docs-path"
+            source_docs_dir: "./optional-docs-path"

@@ -20,33 +20,22 @@ parameters:
   project_name:
     description: "The path where these documents will be located on the docs site."
     type: string
-
 steps:
-  - run:
-      name: Validate Parameters
-      command: |
-        missing_params=""
-        
-        if [ -z "<<parameters.git_email>>" ]; then
-          missing_params="${missing_params} git_email"
-        fi
-        if [ -z "<<parameters.git_username>>" ]; then
-          missing_params="${missing_params} git_username"
-        fi
-        if [ -z "<<parameters.target_repo>>" ]; then
-          missing_params="${missing_params} target_repo"
-        fi
-        if [ -z "<<parameters.description>>" ]; then
-          missing_params="${missing_params} description"
-        fi
-        if [ -z "<<parameters.label>>" ]; then
-          missing_params="${missing_params} label"
-        fi
-        if [ -z "<<parameters.project_name>>" ]; then
-          missing_params="${missing_params} project_name"
-        fi
-        
-        if [ ! -z "$missing_params" ]; then
-          echo "Error: Publish Docs Orb - Missing parameters:$missing_params"
-          exit 1
-        fi
+  - validate_param:
+      param_name: "project_name"
+      param_value: "<<parameters.project_name>>"
+  - validate_param:
+      param_name: "label"
+      param_value: "<<parameters.label>>"
+  - validate_param:
+      param_name: "description"
+      param_value: "<<parameters.description>>"
+  - validate_param:
+      param_name: "target_repo"
+      param_value: "<<parameters.target_repo>>"
+  - validate_param:
+      param_name: "git_username"
+      param_value: "<<parameters.git_username>>"
+  - validate_param:
+      param_name: "git_email"
+      param_value: "<<parameters.git_email>>"

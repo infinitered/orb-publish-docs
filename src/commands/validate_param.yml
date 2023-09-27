@@ -1,0 +1,15 @@
+description: >
+  "Validate that a parameter has been defined"
+parameters:
+  param_name:
+    type: string
+    description: "The name of the parameter to validate and store."
+  param_value:
+    type: string
+    description: "The value of the parameter to validate and store."
+steps:
+  - run:
+      name: Validate <<parameters.param_name>>
+      environment:
+        PARAM_VALUE: <<parameters.param_value>>
+      command: <<include(scripts/validate_param.sh)>>

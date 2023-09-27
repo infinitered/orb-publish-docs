@@ -1,0 +1,10 @@
+description: >
+  "Commits and pushes the updated documentation to the docs repository."
+
+steps:
+  - run:
+      name: Parse commit message and PR number
+      command: <<include(scripts/parse_commit_info.sh)>>
+  - run:
+      name: Commit and push to target repository
+      command: <<include(scripts/commit_and_push_to_target.sh)>>

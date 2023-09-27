@@ -3,7 +3,7 @@
 # Mocking git commands and basename
 git() {
   case "$1" in
-    log) echo "Fix: Commit for testing #42";;
+    log) echo "Fix: Commit for testing (#42)";;
     rev-parse) echo "1234567890abcdef";;
     config) echo "https://github.com/infinitered/sample-repo.git";;
     *) return 1;;
@@ -18,11 +18,9 @@ basename() {
 source ./src/scripts/parse_commit_info.sh
 
 @test "It fetches the last commit message" {
-  expport COMMIT_MESSAGE="Fix: Commit for testing (#42)"
   run FetchCommitMessage
   echo "Debug: Output = '$output'"  # Verbose log
-  [[ $output =~ Fix:\ Commit\ for\ testing\ #42 ]]
-  unset COMMIT_MESSAGE
+  [[ $output =~ Fix:\ Commit\ for\ testing\ \(#42\) ]]
 }
 
 @test "It fetches the commit hash" {

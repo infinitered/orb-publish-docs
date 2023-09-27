@@ -56,6 +56,15 @@ workflows:
       # The orb must be re-packed for publishing, and saved to the workspace.
       - orb-tools/pack:
           filters: *release-filters
+      # Publish development version(s) of the orb.
+      - orb-tools/publish-dev:
+          orb-name: infinitered/publish-docs
+          context: orb-publishing # A restricted context containing your private publishing credentials. Will only execute if approved by an authorized user.
+          requires:
+            - orb-tools/lint
+            - orb-tools/pack
+            - command-test
+            - shellcheck/check
       - orb-tools/publish:
           orb_name: infinitered/publish-docs
           vcs_type: << pipeline.project.type >>

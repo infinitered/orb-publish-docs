@@ -16,4 +16,7 @@ CreateCategoryJSON() {
   echo "_category_.json file created successfully."
 }
 
-CreateCategoryJSON
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  CreateCategoryJSON
+fi
+

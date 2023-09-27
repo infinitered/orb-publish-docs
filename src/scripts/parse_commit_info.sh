@@ -19,4 +19,7 @@ ParseCommitInfo() {
   echo "export FINAL_COMMIT_MESSAGE=\"$FINAL_COMMIT_MESSAGE\"" >> "$BASH_ENV" || { echo "Exporting FINAL_COMMIT_MESSAGE failed"; exit 1; }
 }
 
-ParseCommitInfo
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  ParseCommitInfo
+fi
+

@@ -8,4 +8,6 @@ git commit -m "$FINAL_COMMIT_MESSAGE" || { echo "Git commit failed"; exit 1; }
 git push origin main || { echo "Git push failed"; exit 1; }
 }
 
-CommitAndPushToTarget
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  CommitAndPushToTarget
+fi

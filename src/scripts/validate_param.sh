@@ -7,4 +7,7 @@ ValidateParam() {
   fi
 }
 
-ValidateParam
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  ValidateParam
+fi
+

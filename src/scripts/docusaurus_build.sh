@@ -7,4 +7,6 @@ echo "Running Docusaurus build..."
 yarn build || { echo "Docusaurus build failed"; exit 1; }
 }
 
-DocusaurusBuild
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  DocusaurusBuild
+fi

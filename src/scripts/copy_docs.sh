@@ -6,4 +6,7 @@ CopyDocs() {
   echo "Documents copied successfully."
 }
 
-CopyDocs
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  CopyDocs
+fi
+

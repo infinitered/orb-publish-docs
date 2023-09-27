@@ -18,4 +18,6 @@ CheckDocsExist() {
   fi
 }
 
-CheckDocsExist
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  CheckDocsExist
+fi

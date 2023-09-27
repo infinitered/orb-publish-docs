@@ -13,4 +13,7 @@ MoveStaticDocs() {
   fi
 }
 
-MoveStaticDocs
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  MoveStaticDocs
+fi
+

@@ -1,19 +1,27 @@
 #!/usr/bin/env bats
 
-load '../src/scripts/docusaurus_build.sh'
+# Mock yarn build command to just echo the arguments
+yarn() {
+  echo "$@"
+}
 
 @test "It changes to the TARGET_REPO_DIRECTORY" {
   export TARGET_REPO_DIRECTORY="/path/to/target"
-  run build_docusaurus  # Assuming function name is build_docusaurus in docusaurus_build.sh
-  [ "$output" =~ "Changing to target directory: /path/to/target" ]
+  run ./src/scripts/build_docusaurus.sh
+  [[ "$output" =~ "Changing to target directory: /path/to/target" ]]
 }
 
 @test "It runs yarn build" {
-  run build_docusaurus
-  [ "$output" =~ "Running Docusaurus build..." ]
+  run ./src/scripts/build_docusaurus.sh
+  [[ "$output" =~ "Running Docusaurus build..." ]]
 }
 
 @test "It handles yarn build failure" {
-  run build_docusaurus
-  [ "$output" =~ "Docusaurus build failed" ]
+  # Mock yarn build to return an error
+  yarn() {
+    return 1
+  }
+  run ./src/scripts/build_docusaurus.sh
+  [[ "$output" =~ "Docusaurus build failed" ]]
+  [ "$status" -eq 1 ]
 }

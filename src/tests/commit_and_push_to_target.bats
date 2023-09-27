@@ -11,7 +11,7 @@ git() {
   export FINAL_COMMIT_MESSAGE="Commit message"
 
   # Run the script
-  run source commit_and_push_to_target.sh
+  run ./src/scripts/commit_and_push_to_target.sh
 
   # Validate output or status
   [ "$output" =~ "Changing directory failed" ]
@@ -24,7 +24,7 @@ git() {
   export FINAL_COMMIT_MESSAGE="Commit message"
 
   # Run the script
-  run source commit_and_push_to_target.sh
+  run ./src/scripts/commit_and_push_to_target.sh
 
   # Validate output
   [ "$output" =~ "add ." ]
@@ -36,7 +36,7 @@ git() {
   export FINAL_COMMIT_MESSAGE="Commit message"
 
   # Run the script
-  run source commit_and_push_to_target.sh
+  run ./src/scripts/commit_and_push_to_target.sh
 
   # Validate output
   [ "$output" =~ "commit -m \"Commit message\"" ]
@@ -48,7 +48,7 @@ git() {
   export FINAL_COMMIT_MESSAGE="Commit message"
 
   # Run the script
-  run source commit_and_push_to_target.sh
+  run ./src/scripts/commit_and_push_to_target.sh
 
   # Validate output
   [ "$output" =~ "push origin main" ]

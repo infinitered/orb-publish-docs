@@ -70,6 +70,7 @@ source ./src/scripts/parse_commit_info.sh
   # shellcheck disable=SC2031
   export REPO_NAME="sample-repo"
   export COMMIT_HASH="1234567890abcdef"
+  export COMMIT_MESSAGE="Fix: Commit for testing"
 
   run ConstructCommitMessage
   echo "Debug: Output = '$output'"  # Verbose log

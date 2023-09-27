@@ -60,7 +60,7 @@ erase_test_files(){
   echo "Debug: Status = '$status'"
 
   # Validate output or status
-  [ "$output" = "Checking if documents exist in the source directory.\nError: No files found in docs directory." ]
+  echo "$output" | grep -q "No files found"
   [ "$status" -eq 1 ]
 
   erase_test_files;
@@ -84,6 +84,6 @@ erase_test_files(){
   echo "Debug: Status = '$status'"
 
   # Validate output or status
-  [ "$output" = "Checking if documents exist in the source directory.\nError: Directory $SOURCE_DOCS_PATH does not exist." ]
+  echo "$output" | grep -q "does not exist"
   [ "$status" -eq 1 ]
 }

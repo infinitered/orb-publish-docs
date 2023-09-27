@@ -20,17 +20,20 @@ cd() {
 }
 
 @test "It changes to the TARGET_REPO_DIRECTORY and succeeds" {
-  pwd
   # Mock environment variables
-  export TARGET_REPO_DIRECTORY="/path/to/nonexistent/repo"
+  export TARGET_REPO_DIRECTORY="/path/to/repo"
   export FINAL_COMMIT_MESSAGE="Commit message"
 
   # Run the script
   run ./src/scripts/commit_and_push_to_target.sh
 
+  # Debug: Print output and status
+  echo "Debug: Output = '$output'"
+  echo "Debug: Status = '$status'"
+
   # Validate output or status
-  [ "$output" =~ "Changing directory failed" ]
-  [ "$status" -eq 1 ]
+  [ "$output" =~ "Changing directory to /path/to/repo" ]
+  [ "$status" -eq 0 ]  # assuming the script should exit successfully
 }
 
 @test "It runs git add and succeeds" {

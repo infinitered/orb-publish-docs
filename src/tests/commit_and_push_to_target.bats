@@ -7,7 +7,6 @@ git() {
 
 export WORKING_DIR="."
 
-
 # Mock cd command to just echo the directory
 cd() {
   if [ "$1" = $WORKING_DIR ]; then
@@ -19,13 +18,16 @@ cd() {
   fi
 }
 
+# Source the script to get the CommitAndPushToTarget function
+source ./src/scripts/commit_and_push_to_target.sh
+
 @test "It changes to the TARGET_REPO_DIRECTORY and succeeds" {
   # Mock environment variables
   export TARGET_REPO_DIRECTORY="/path/to/repo"
   export FINAL_COMMIT_MESSAGE="Commit message"
 
-  # Run the script
-  run ./src/scripts/commit_and_push_to_target.sh
+  # Run the function
+  run CommitAndPushToTarget
 
   # Debug: Print output and status
   echo "Debug: Output = '$output'"
@@ -37,18 +39,17 @@ cd() {
 }
 
 @test "It runs git add and succeeds" {
-  pwd
   # Mock environment variables
   export TARGET_REPO_DIRECTORY=$WORKING_DIR
   export FINAL_COMMIT_MESSAGE="Commit message"
 
-  # Run the script
-  run ./src/scripts/commit_and_push_to_target.sh
+  # Run the function
+  run CommitAndPushToTarget
 
   echo "Debug: Output = '$output'"
 
   # Validate output
-  [ "$output" =~ "add ." ]
+  [[ "$output" =~ "add docs" ]]
 }
 
 @test "It runs git commit and succeeds" {
@@ -56,13 +57,13 @@ cd() {
   export TARGET_REPO_DIRECTORY=$WORKING_DIR
   export FINAL_COMMIT_MESSAGE="Commit message"
 
-  # Run the script
-  run ./src/scripts/commit_and_push_to_target.sh
+  # Run the function
+  run CommitAndPushToTarget
 
   echo "Debug: Output = '$output'"
 
   # Validate output
-  [ "$output" =~ "commit -m \"Commit message\"" ]
+  [[ "$output" =~ "commit -m \"Commit message\"" ]]
 }
 
 @test "It runs git push and succeeds" {
@@ -70,11 +71,11 @@ cd() {
   export TARGET_REPO_DIRECTORY=$WORKING_DIR
   export FINAL_COMMIT_MESSAGE="Commit message"
 
-  # Run the script
-  run ./src/scripts/commit_and_push_to_target.sh
+  # Run the function
+  run CommitAndPushToTarget
 
   echo "Debug: Output = '$output'"
 
   # Validate output
-  [ "$output" =~ "push origin main" ]
+  [[ "$output" =~ "push origin main" ]]
 }

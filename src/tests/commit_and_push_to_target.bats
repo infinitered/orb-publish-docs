@@ -5,6 +5,12 @@ git() {
   echo "$@"
 }
 
+# Mock cd command to just echo the directory
+cd() {
+  echo "Changing directory to $1"
+  return 0  # Success
+}
+
 @test "It changes to the TARGET_REPO_DIRECTORY and succeeds" {
   pwd
   # Mock environment variables

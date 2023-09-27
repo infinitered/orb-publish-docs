@@ -60,7 +60,7 @@ source ./src/scripts/parse_commit_info.sh
   run ConstructCommitMessage
   echo "Debug: Output = '$output'"  # Verbose log
   [[ $output =~ https://github.com/infinitered/sample-repo/pull/42 ]]
-  [[ $output =~ orb:\ sample-repo\ --\ Fix:\ Commit\ for\ testing\ #42\ --\ https://github.com/infinitered/sample-repo/pull/42 ]]
+  [[ $output =~ orb:\ sample-repo\ --\ Fix:\ Commit\ for\ testing\ \(#42\)\ --\ https://github.com/infinitered/sample-repo/pull/42 ]]
   unset PR_NUMBER
   unset REPO_NAME
   unset COMMIT_MESSAGE

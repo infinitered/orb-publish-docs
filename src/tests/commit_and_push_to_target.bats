@@ -23,7 +23,7 @@ source ./src/scripts/commit_and_push_to_target.sh
 
 @test "It changes to the TARGET_REPO_DIRECTORY and succeeds" {
   # Mock environment variables
-  export TARGET_REPO_DIRECTORY="/path/to/repo"
+  export TARGET_REPO_DIRECTORY="$WORKING_DIR"
   export FINAL_COMMIT_MESSAGE="Commit message"
 
   # Run the function
@@ -34,7 +34,7 @@ source ./src/scripts/commit_and_push_to_target.sh
   echo "Debug: Status = '$status'"
 
   # Validate output or status
-  echo "$output" | grep -q "Changing directory to /path/to/repo"
+  [[ "$output" =~ Changing\ directory\ to\ $WORKING_DIR ]]
   [ "$status" -eq 0 ]  # assuming the script should exit successfully
 }
 
@@ -49,7 +49,7 @@ source ./src/scripts/commit_and_push_to_target.sh
   echo "Debug: Output = '$output'"
 
   # Validate output
-  [[ "$output" =~ "add docs" ]]
+  [[ "$output" =~ add\ docs ]]
 }
 
 @test "It runs git commit and succeeds" {
@@ -63,7 +63,7 @@ source ./src/scripts/commit_and_push_to_target.sh
   echo "Debug: Output = '$output'"
 
   # Validate output
-  [[ "$output" =~ "commit -m \"Commit message\"" ]]
+  [[ "$output" =~ commit\ -m\ \"Commit\ message\" ]]
 }
 
 @test "It runs git push and succeeds" {
@@ -77,5 +77,5 @@ source ./src/scripts/commit_and_push_to_target.sh
   echo "Debug: Output = '$output'"
 
   # Validate output
-  [[ "$output" =~ "push origin main" ]]
+  [[ "$output" =~ push\ origin\ main ]]
 }

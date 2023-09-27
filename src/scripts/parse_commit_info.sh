@@ -1,3 +1,5 @@
+#! /bin/bash
+
 FetchCommitMessage() {
   git log -1 --pretty=%B || { echo "Fetching commit message failed"; exit 1; }
 }

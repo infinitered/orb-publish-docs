@@ -6,6 +6,7 @@ git() {
 }
 
 @test "It changes to the TARGET_REPO_DIRECTORY and succeeds" {
+  pwd
   # Mock environment variables
   export TARGET_REPO_DIRECTORY="/path/to/repo"
   export FINAL_COMMIT_MESSAGE="Commit message"
@@ -19,6 +20,7 @@ git() {
 }
 
 @test "It runs git add and succeeds" {
+  pwd
   # Mock environment variables
   export TARGET_REPO_DIRECTORY="."
   export FINAL_COMMIT_MESSAGE="Commit message"

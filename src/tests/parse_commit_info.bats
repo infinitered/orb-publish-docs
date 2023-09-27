@@ -39,7 +39,7 @@ source ./src/scripts/parse_commit_info.sh
 
 @test "It fetches PR number from commit message" {
   run ParseCommitInfo
-  [[ $output =~ #42 ]]
+  [[ $output =~ \#42 ]]
 }
 
 @test "It constructs PR link and commit message" {

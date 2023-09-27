@@ -70,7 +70,7 @@ erase_test_files(){
   # Debug: Print current directory
   echo "Debug: Current directory is $(pwd)"
 
-  # Set SOURCE_DOCS_PATH to a non-existent directory
+  # Set a non-existent path
   export SOURCE_DOCS_PATH="/path/to/nonexistent/directory"
 
   # Debug: Print environment variable

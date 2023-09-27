@@ -32,7 +32,7 @@ cd() {
   echo "Debug: Status = '$status'"
 
   # Validate output or status
-  [ "$output" =~ "Changing directory to /path/to/repo" ]
+  echo "$output" | grep -q "Changing directory to /path/to/repo"
   [ "$status" -eq 0 ]  # assuming the script should exit successfully
 }
 

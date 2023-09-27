@@ -1,5 +1,7 @@
 #!/usr/bin/env bats
 
+unalias ls
+
 # Mock ls command to simulate a directory with files
 ls_with_files() {
   echo "file1.txt file2.txt"

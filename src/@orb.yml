@@ -1,13 +1,13 @@
 version: 2.1
 
 description: >
-  An orb to merge docusaurus docs from several repos.
+  An orb to merge docusaurus docs from several repos. Copies the docs from the current repo to the target repo, then builds the docs to make sure they're working.
 # What will your orb allow users to accomplish?
 # Descriptions should be short, simple, and informative.
 
 # This information will be displayed in the orb registry and is not mandatory.
 display:
-  source_url: "https://github.com/infinitered/publish-docs"
+  source_url: "https://github.com/infinitered/orb-publish-docs"
 
 # If your orb requires other orbs, you can import them like this. Otherwise, remove the "orbs" stanza.
 orbs:

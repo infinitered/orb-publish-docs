@@ -20,20 +20,10 @@ parameters:
   project_name:
     description: "The path where these documents will be located on the docs site."
     type: string
-  source_docs_dir:
-    description: "The path to the source documentation directory."
-    type: string
-  target_repo_directory:
-    description: "The directory where the clone of the target repo has been cloned."
-    type: string
-
 steps:
   - validate_param:
       param_name: "project_name"
       param_value: "<<parameters.project_name>>"
-  - validate_param:
-      param_name: "source_docs_dir"
-      param_value: "<<parameters.source_docs_dir>>"
   - validate_param:
       param_name: "label"
       param_value: "<<parameters.label>>"
@@ -49,6 +39,3 @@ steps:
   - validate_param:
       param_name: "git_email"
       param_value: "<<parameters.git_email>>"
-  - validate_param:
-      param_name: "target_repo_directory"
-      param_value: "<<parameters.target_repo_directory>>"

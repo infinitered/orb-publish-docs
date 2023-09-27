@@ -26,8 +26,21 @@ jobs:
     docker:
       - image: cimg/base:current
     steps:
+      - checkout
       - run:
-          command: echo 'tests go here'
+          name: Run BATS tests
+          command: |
+            # Install Bats if needed
+            if ! command -v bats &> /dev/null
+            then
+              echo "Installing Bats"
+              git clone https://github.com/bats-core/bats-core.git
+              cd bats-core
+              sudo ./install.sh /usr/local
+              cd ..
+            fi
+            # Run Bats tests
+            bats ./src/tests/*.bats
 workflows:
   test-deploy:
     jobs:

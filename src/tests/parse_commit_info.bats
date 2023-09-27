@@ -1,9 +1,11 @@
 #! /bin/bash
 
+COMMIT_MESSAGE_WITH_PR="Fix: Commit for testing (#42)"
+
 # Mocking git commands and basename
 git() {
   case "$1" in
-    log) echo "Fix: Commit for testing (#42)";;
+    log) echo $COMMIT_MESSAGE_WITH_PR;;
     rev-parse) echo "1234567890abcdef";;
     config) echo "https://github.com/infinitered/sample-repo.git";;
     *) return 1;;
@@ -42,6 +44,7 @@ source ./src/scripts/parse_commit_info.sh
 }
 
 @test "It fetches PR number from commit message" {
+  export COMMIT_MESSAGE=$COMMIT_MESSAGE_WITH_PR
   run ExtractPRNumber
   echo "Debug: Output = '$output'"  # Verbose log
   [[ $output =~ \#42 ]]
@@ -78,7 +81,7 @@ source ./src/scripts/parse_commit_info.sh
 
 @test "It parses and constructs the final commit message" {
   run ParseCommitInfo
-  echo "Debug: Output = '$output'"  # Verbose log
-  [[ $output =~ sample-repo\ --\ Fix:\ Commit\ for\ testing\ #42\ --\ https://github.com/infinitered/sample-repo/pull/42 ]]
+  echo "Debug: FINAL_COMMIT_MESSAGE = '$FINAL_COMMIT_MESSAGE'"  # Verbose log
+  [[ $FINAL_COMMIT_MESSAGE == "sample-repo -- Fix: Commit for testing #42 -- https://github.com/infinitered/sample-repo/pull/42" ]]
 }
 

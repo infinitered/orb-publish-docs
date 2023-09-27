@@ -1,6 +1,6 @@
+#! /bin/bash
 
-
-
+# Move static content out of /docs into /static.
 echo "Checking for static files in the target repository."
 if [ "$(ls -A "$HOME/$TARGET_REPO_DIRECTORY/docs/$PROJECT_NAME/_static_")" ]; then
   echo "Moving static files."

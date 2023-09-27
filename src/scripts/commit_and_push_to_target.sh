@@ -1,3 +1,5 @@
+#! /bin/bash
+
 # Parameters: Final commit message
 
 cd "$TARGET_REPO_DIRECTORY" || { echo "Changing directory failed"; exit 1; }

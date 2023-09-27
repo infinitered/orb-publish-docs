@@ -1,3 +1,4 @@
+#! /bin/bash
 # Parameters: Project name, Label, Description
 echo "Creating _category_.json file."
 echo "

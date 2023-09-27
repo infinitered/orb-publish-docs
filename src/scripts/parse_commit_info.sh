@@ -1,4 +1,4 @@
-# Parameters: None
+#! /bin/bash
 
 # Extract the last commit message and look for a PR number
 COMMIT_MESSAGE=$(git log -1 --pretty=%B) || { echo "Fetching commit message failed"; exit 1; }

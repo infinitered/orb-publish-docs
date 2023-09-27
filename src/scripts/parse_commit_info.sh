@@ -17,7 +17,7 @@ ParseRepoName() {
 }
 
 ExtractPRNumber() {
-  echo "$COMMIT_MESSAGE" | grep -o "#[0-9]\+" || true
+  echo "$COMMIT_MESSAGE" | grep -o "#[0-9]\+" | grep -o "[0-9]\+" || true
 }
 
 ConstructCommitMessage() {
@@ -32,21 +32,17 @@ ConstructCommitMessage() {
 
 ParseCommitInfo() {
   COMMIT_MESSAGE=$(FetchCommitMessage)
-  echo "COMMIT_MESSAGE: $COMMIT_MESSAGE"
   COMMIT_HASH=$(FetchCommitHash)
-  echo "COMMIT_HASH: $COMMIT_HASH"
   REPO_URL=$(FetchRepoURL)
-  echo "REPO_URL: $REPO_URL"
   REPO_NAME=$(ParseRepoName)
-  echo "REPO_NAME: $REPO_NAME"
   PR_NUMBER=$(ExtractPRNumber)
-  echo "PR_NUMBER: $PR_NUMBER"
 
   final_commit_message=$(ConstructCommitMessage)
-  echo "FINAL_COMMIT_MESSAGE: $final_commit_message"
-  export FINAL_COMMIT_MESSAGE="$final_commit_message"
+  echo "$final_commit_message"
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-  ParseCommitInfo
+  final_commit_message="$(ParseCommitInfo)"
+  export FINAL_COMMIT_MESSAGE=$final_commit_message
 fi
+

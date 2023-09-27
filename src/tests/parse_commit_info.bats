@@ -47,7 +47,7 @@ source ./src/scripts/parse_commit_info.sh
   export COMMIT_MESSAGE=$COMMIT_MESSAGE_WITH_PR
   run ExtractPRNumber
   echo "Debug: Output = '$output'"  # Verbose log
-  [[ $output =~ \#42 ]]
+  [[ $output =~ \42 ]]
 }
 
 @test "It constructs PR link and commit message when PR number is present" {
@@ -81,7 +81,7 @@ source ./src/scripts/parse_commit_info.sh
 
 @test "It parses and constructs the final commit message" {
   run ParseCommitInfo
-  echo "Debug: FINAL_COMMIT_MESSAGE = '$FINAL_COMMIT_MESSAGE'"  # Verbose log
-  [[ $FINAL_COMMIT_MESSAGE == "sample-repo -- Fix: Commit for testing #42 -- https://github.com/infinitered/sample-repo/pull/42" ]]
+  echo "Debug: Output = '$output'"  # Verbose log
+  [[ $output == "sample-repo -- Fix: Commit for testing (#42) -- https://github.com/infinitered/sample-repo/pull/42" ]]
 }
 

@@ -42,7 +42,7 @@ repository.
 | `description`     | String | Short description of the package used in indexes etc. Default is an empty string.                |
 | `label`           | String | The label that will appear in the sidebar of the docs site. Default is "package-name".           |
 | `project_name`    | String | The path where these documents will be located on the docs site. Default is an empty string.     |
-| `source_docs_path`| String | The path to the directory containing the source markdown files. Default is "./docs".              |
+| `source_docs_dir`| String | The path to the directory containing the source markdown files. Default is "./docs".              |
 
 ## Basic Example
 
@@ -64,7 +64,7 @@ workflows:
           description: "An example package."
           label: "Example Package"
           project_name: "example-package"
-          source_docs_path: "./example-docs"
+          source_docs_dir: "./example-docs"
 ```
 
 ### Handling Static Files
@@ -152,7 +152,7 @@ Clones a Docusaurus repo and adds the docs from the current repo to the target r
 | `description`   | String | Short description of the package. Default is an empty string.                |
 | `label`         | String | The label for the sidebar. Default is "package-name".                        |
 | `project_name`  | String | The path where the documents will be located on the docs site.               |
-| `source_docs_path`| String | The path to the directory containing the source markdown files. Default is "./docs".|
+| `source_docs_dir`| String | The path to the directory containing the source markdown files. Default is "./docs".|
 | `target_docs_path`| String | The path to the directory in the target repo where docs will be copied. Default is "./docs".|
 
 ---

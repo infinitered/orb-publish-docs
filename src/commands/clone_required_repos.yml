@@ -1,40 +1,16 @@
 description: >
   "Setup git and clone required repositories"
 parameters:
-  git_email:
+  source_repo_directory:
     type: string
-    default: ""
-    description: "Email for Git configuration."
-  git_username:
-    type: string
-    default: ""
-    description: "Username for Git configuration."
-  target_repo:
-    type: string
-    default: ""
-    description: "The GitHub repository URL where the documentation resides."
+    default: source
+    description: "The directory where the clone of the target repo has been cloned."
 steps:
-  - checkout
   - run:
-      name: Install Git
-      command: |
-        # Check if Git is already installed
-        if git --version > /dev/null 2>&1; then
-          echo "Git is already installed."
-        else
-          echo "Git not found. Installing..."
-          # Update package lists and install Git
-          sudo apt-get update || { echo "apt-get update failed"; exit 1; }
-          sudo apt-get install -y git || { echo "Git installation failed"; exit 1; }
-          echo "Git installed successfully."
-        fi
-  - run:
-      name: Setup Git
-      command: |
-        # Configure Git username and email
-        echo "Configuring Git username and email: << parameters.git_username >> -- << parameters.git_email >>"
-        git config --global user.name "<< parameters.git_username >>" || { echo "Git username configuration failed"; exit 1; }
-        git config --global user.email "<< parameters.git_email >>" || { echo "Git email configuration failed"; exit 1; }
+      name: Set Git Username and Email
+      command: <<include(scripts/set_git_user.sh)>>
+  - checkout:
+      path: $HOME/<<parameters.source_repo_directory>>
   - run:
       name: Clone target repository
-      command: git clone << parameters.target_repo >> ~/target_repo || { echo "Git clone failed"; exit 1; }
+      command: git clone $TARGET_REPO ~/$TARGET_REPO_DIRECTORY || { echo "Git clone failed"; exit 1; }

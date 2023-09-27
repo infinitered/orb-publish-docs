@@ -1,0 +1,25 @@
+description: "Install Yarn dependencies and cache them."
+parameters:
+  working_directory:
+    type: string
+    default: ""
+    description: "The working directory where the repository is cloned."
+steps:
+  - validate_param:
+      param_name: "working_directory"
+      param_value: "<<parameters.working_directory>>"
+  - restore_cache:
+      name: Restore Yarn Cache
+      keys:
+        - yarn-cache-<<parameters.working_directory>>-{{ checksum "yarn.lock" }}
+  - run:
+      name: Use local Yarn version
+      command: echo "export PATH=$(pwd)/.yarn/releases:$PATH" >> $BASH_ENV
+  - run:
+      name: Install Dependencies
+      command: yarn install --immutable
+  - save_cache:
+      name: Save Yarn Cache
+      key: yarn-cache-{{ checksum "yarn.lock" }}
+      paths:
+        - <<parameters.working_directory>>/.yarn/cache

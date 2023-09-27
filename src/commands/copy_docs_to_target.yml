@@ -1,67 +1,15 @@
 description: >
   "Clones a docusaurus repo and adds the docs from the current repo to it."
-
-parameters:
-  project_name:
-    type: string
-    default: ""
-    description: "The path where these documents will be located on the docs site: (i.e. /docs/{package-name}/getting-started.md)"
-
-  source_docs_path:
-    type: string
-    default: "./docs"
-    description: "The path to the directory containing the markdown files. Defaults to './docs'."
-
-  target_docs_path:
-    type: string
-    default: "./docs"
-    description: "The path to the directory containing the markdown files. Defaults to './docs'."
-
-  label:
-    type: string
-    default: "package-name"
-    description: "The label that will appear in the sidebar of the docs site. Should be the full name of the package in Title Case. (i.e. Ignite CLI, or React Native MLKit)."
-
-  description:
-    type: string
-    default: ""
-    description: "Short description of the package used in indexes etc."
-
 steps:
   - run:
       name: "Check if docs exist"
-      command: |
-        echo "Checking if documents exist in the source directory."
-        if [ ! "$(ls -A << parameters.source_docs_path >>)" ]; then
-          echo "Error: No files found in docs directory."
-          exit 1
-        fi
+      command: <<include(scripts/check_docs_exist.sh)>>
   - run:
       name: "Copy docs to target repository"
-      command: |
-        echo "Copying documents to the target repository."
-        cp -R << parameters.source_docs_path >> ~/target_repo/<<parameters.target_docs_path>>/<< parameters.project_name >>
-        echo "Documents copied successfully."
+      command: <<include(scripts/copy_docs.sh)>>
   - run:
       name: "Move static content to appropriate folder"
-      command: |
-        echo "Checking for static files in the target repository."
-        if [ "$(ls -A ~/target_repo/docs/<< parameters.project_name >>/_static_)" ]; then
-          echo "Moving static files."
-          mv ~/target_repo/docs/<< parameters.project_name >>/_static_ ~/target_repo/static/<< parameters.project_name >>/
-          echo "Static files moved successfully."
-        else
-          echo "No static files to copy."
-        fi
+      command: <<include(scripts/move_static_content.sh)>>
   - run:
       name: "Create _category_.json"
-      command: >
-        echo "Creating _category_.json file."
-        echo '{
-          "label": "<< parameters.label >>",
-          "link": {
-            "type": "generated-index",
-            "description": "<< parameters.description >>"
-          }
-        }' > ~/target_repo/docs/<< parameters.project_name >>/_category_.json
-        echo "_category_.json file created successfully."
+      command: <<include(scripts/create_category_json.sh)>>

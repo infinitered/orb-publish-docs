@@ -8,9 +8,9 @@ orbs:
 
 # Use this tag to ensure test jobs always run,
 # even though the downstream publish job will only run on release tags.
-filters: &filters
-  tags:
-    only: /.*/
+#filters: &filters
+#  tags:
+#    only: /.*/
 
 # Filter for release tags.
 release-filters: &release-filters

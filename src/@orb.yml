@@ -9,6 +9,6 @@ description: >
 display:
   source_url: "https://github.com/infinitered/publish-docs"
 
-# If your orb requires other orbs, you can import them like this. Otherwise remove the "orbs" stanza.
+# If your orb requires other orbs, you can import them like this. Otherwise, remove the "orbs" stanza.
 orbs:
   node: circleci/node@5.1.0

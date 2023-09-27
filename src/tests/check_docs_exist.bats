@@ -16,7 +16,7 @@ ls_empty() {
   export SOURCE_DOCS_PATH="/path/to/docs"
 
   # Run the script
-  run ./src/tests/check_docs_exist.sh
+  run ./src/scripts/check_docs_exist.sh
 
   # Validate output or status
   [ "$output" = "Checking if documents exist in the source directory." ]
@@ -29,7 +29,7 @@ ls_empty() {
   export SOURCE_DOCS_PATH="/path/to/docs"
 
   # Run the script
-  run ./src/tests/check_docs_exist.sh
+  run ./src/scripts/check_docs_exist.sh
 
   # Validate output or status
   [ "$output" = "Checking if documents exist in the source directory.\nError: No files found in docs directory." ]

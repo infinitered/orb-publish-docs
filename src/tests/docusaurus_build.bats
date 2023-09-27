@@ -6,8 +6,12 @@ yarn() {
 }
 
 @test "It changes to the TARGET_REPO_DIRECTORY" {
+  echo $(pwd)
   export TARGET_REPO_DIRECTORY="/path/to/target"
-  run ./src/scripts/build_docusaurus.sh
+  ls ./src/scripts
+  run ./src/scripts/docusaurus_build.sh
+  echo "Output: $output" # Debugging line
+  echo "Status: $status" # Debugging line
   [[ "$output" =~ "Changing to target directory: /path/to/target" ]]
 }
 

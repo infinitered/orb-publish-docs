@@ -52,6 +52,7 @@ source ./src/scripts/parse_commit_info.sh
 @test "It constructs PR link and commit message when PR number is present" {
   # Set up PR number
   export PR_NUMBER=42
+  # shellcheck disable=SC2030
   export REPO_NAME="sample-repo"
 
   run ConstructCommitMessage

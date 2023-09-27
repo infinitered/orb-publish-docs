@@ -59,7 +59,7 @@ source ./src/scripts/parse_commit_info.sh
   run ConstructCommitMessage
   echo "Debug: Output = '$output'"  # Verbose log
   [[ $output =~ https://github.com/infinitered/sample-repo/pull/42 ]]
-  [[ $output =~ sample-repo\ --\ Fix:\ Commit\ for\ testing\ #42\ --\ https://github.com/infinitered/sample-repo/pull/42 ]]
+  [[ $output =~ orb:\ sample-repo\ --\ Fix:\ Commit\ for\ testing\ #42\ --\ https://github.com/infinitered/sample-repo/pull/42 ]]
   unset PR_NUMBER
   unset REPO_NAME
 }
@@ -74,7 +74,7 @@ source ./src/scripts/parse_commit_info.sh
   run ConstructCommitMessage
   echo "Debug: Output = '$output'"  # Verbose log
   [[ $output =~ https://github.com/infinitered/sample-repo/commit/1234567890abcdef ]]
-  [[ $output =~ sample-repo\ --\ Fix:\ Commit\ for\ testing\ --\ https://github.com/infinitered/sample-repo/commit/1234567890abcdef ]]
+  [[ $output =~ orb:\ sample-repo\ --\ Fix:\ Commit\ for\ testing\ --\ https://github.com/infinitered/sample-repo/commit/1234567890abcdef ]]
   unset REPO_NAME
   unset COMMIT_HASH
 }
@@ -82,6 +82,6 @@ source ./src/scripts/parse_commit_info.sh
 @test "It parses and constructs the final commit message" {
   run ParseCommitInfo
   echo "Debug: Output = '$output'"  # Verbose log
-  [[ $output == "sample-repo -- Fix: Commit for testing (#42) -- https://github.com/infinitered/sample-repo/pull/42" ]]
+  [[ $output == "orb: sample-repo -- Fix: Commit for testing (#42) -- https://github.com/infinitered/sample-repo/pull/42" ]]
 }
 

@@ -23,10 +23,10 @@ ExtractPRNumber() {
 ConstructCommitMessage() {
   if [ -n "$PR_NUMBER" ]; then
     PR_LINK="https://github.com/infinitered/$REPO_NAME/pull/$PR_NUMBER"
-    echo "$REPO_NAME -- $COMMIT_MESSAGE -- $PR_LINK"
+    echo "orb: $REPO_NAME -- $COMMIT_MESSAGE -- $PR_LINK"
   else
     COMMIT_LINK="https://github.com/infinitered/$REPO_NAME/commit/$COMMIT_HASH"
-    echo "$REPO_NAME -- $COMMIT_MESSAGE -- $COMMIT_LINK"
+    echo "orb: $REPO_NAME -- $COMMIT_MESSAGE -- $COMMIT_LINK"
   fi
 }
 

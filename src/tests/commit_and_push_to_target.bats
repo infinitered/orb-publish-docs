@@ -5,21 +5,24 @@ git() {
   echo "$@"
 }
 
+export $WORKING_DIR="."
+
+
 # Mock cd command to just echo the directory
 cd() {
-  if [ "$1" = "/path/to/nonexistent/repo" ]; then
-    echo "Changing directory failed"
-    return 1  # Failure
-  else
+  if [ "$1" = $WORKING_DIR ]; then
     echo "Changing directory to $1"
     return 0  # Success
+  else
+    echo "Changing directory failed"
+    return 1  # Failure
   fi
 }
 
 @test "It changes to the TARGET_REPO_DIRECTORY and succeeds" {
   pwd
   # Mock environment variables
-  export TARGET_REPO_DIRECTORY="/path/to/repo"
+  export TARGET_REPO_DIRECTORY="/path/to/nonexistent/repo"
   export FINAL_COMMIT_MESSAGE="Commit message"
 
   # Run the script
@@ -33,7 +36,7 @@ cd() {
 @test "It runs git add and succeeds" {
   pwd
   # Mock environment variables
-  export TARGET_REPO_DIRECTORY="."
+  export TARGET_REPO_DIRECTORY=$WORKING_DIR
   export FINAL_COMMIT_MESSAGE="Commit message"
 
   # Run the script
@@ -45,7 +48,7 @@ cd() {
 
 @test "It runs git commit and succeeds" {
   # Mock environment variables
-  export TARGET_REPO_DIRECTORY="."
+  export TARGET_REPO_DIRECTORY=$WORKING_DIR
   export FINAL_COMMIT_MESSAGE="Commit message"
 
   # Run the script
@@ -57,7 +60,7 @@ cd() {
 
 @test "It runs git push and succeeds" {
   # Mock environment variables
-  export TARGET_REPO_DIRECTORY="."
+  export TARGET_REPO_DIRECTORY=$WORKING_DIR
   export FINAL_COMMIT_MESSAGE="Commit message"
 
   # Run the script

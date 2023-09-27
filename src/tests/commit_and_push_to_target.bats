@@ -63,7 +63,7 @@ source ./src/scripts/commit_and_push_to_target.sh
   echo "Debug: Output = '$output'"
 
   # Validate output
-  echo "$output" | grep -qE 'commit\s*-m\s*"Commit message"'
+  [[ "$output" =~ commit\ \-m\ \"Commit\ message\" ]]
 }
 
 @test "It runs git push and succeeds" {

@@ -28,11 +28,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Set Environment Variables
-          environment:
-            USE_MOCKS: "true"
-          command: echo "Environment variables set."
-      - run:
           name: Run BATS tests
           command: |
             # Install Bats if needed
@@ -56,6 +51,7 @@ workflows:
       # The orb must be re-packed for publishing, and saved to the workspace.
       - orb-tools/pack:
           filters: *release-filters
+      # Publish development version(s) of the orb.
       - orb-tools/publish:
           orb_name: infinitered/publish-docs
           vcs_type: << pipeline.project.type >>
@@ -64,5 +60,6 @@ workflows:
           requires:
             - orb-tools/pack
             - command-test
-          context: orb-publishing
+          context:
+            - orb-publishing
           filters: *release-filters

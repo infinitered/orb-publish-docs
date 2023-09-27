@@ -3,11 +3,13 @@
 # Mock ls command to simulate a directory with files
 ls_with_files() {
   echo "file1.txt file2.txt"
+  return 0
 }
 
 # Mock ls command to simulate an empty directory
 ls_empty() {
   echo ""
+  return 0
 }
 
 @test "It checks if documents exist in source directory and finds files" {

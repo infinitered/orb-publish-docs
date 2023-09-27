@@ -45,6 +45,8 @@ cd() {
   # Run the script
   run ./src/scripts/commit_and_push_to_target.sh
 
+  echo "Debug: Output = '$output'"
+
   # Validate output
   [ "$output" =~ "add ." ]
 }
@@ -57,6 +59,8 @@ cd() {
   # Run the script
   run ./src/scripts/commit_and_push_to_target.sh
 
+  echo "Debug: Output = '$output'"
+
   # Validate output
   [ "$output" =~ "commit -m \"Commit message\"" ]
 }
@@ -68,6 +72,8 @@ cd() {
 
   # Run the script
   run ./src/scripts/commit_and_push_to_target.sh
+
+  echo "Debug: Output = '$output'"
 
   # Validate output
   [ "$output" =~ "push origin main" ]

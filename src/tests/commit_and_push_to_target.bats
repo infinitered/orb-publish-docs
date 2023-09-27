@@ -7,8 +7,13 @@ git() {
 
 # Mock cd command to just echo the directory
 cd() {
-  echo "Changing directory to $1"
-  return 0  # Success
+  if [ "$1" = "/path/to/nonexistent/repo" ]; then
+    echo "Changing directory failed"
+    return 1  # Failure
+  else
+    echo "Changing directory to $1"
+    return 0  # Success
+  fi
 }
 
 @test "It changes to the TARGET_REPO_DIRECTORY and succeeds" {

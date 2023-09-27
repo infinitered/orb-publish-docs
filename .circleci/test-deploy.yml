@@ -28,6 +28,11 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Set Environment Variables
+          environment:
+            USE_MOCKS: "true"
+          command: echo "Environment variables set."
+      - run:
           name: Run BATS tests
           command: |
             # Install Bats if needed

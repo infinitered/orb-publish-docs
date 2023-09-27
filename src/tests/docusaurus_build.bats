@@ -14,7 +14,7 @@ yarn() {
 
 @test "It runs yarn build" {
   run ./src/scripts/docusaurus_build.sh
-  [[ "$output" =~ "Running Docusaurus build..." ]]
+  [[ "$output" =~ Running Docusaurus build... ]]
 }
 
 @test "It handles yarn build failure" {

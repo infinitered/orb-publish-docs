@@ -11,5 +11,8 @@ steps:
       name: Clone source repository
       command: git clone $CIRCLE_REPOSITORY_URL $SOURCE_REPO_DIRECTORY
   - run:
+      name: Log Target Repo
+      command: echo $TARGET_REPO $TARGET_REPO_DIRECTORY
+  - run:
       name: Clone target repository
       command: git clone $TARGET_REPO $TARGET_REPO_DIRECTORY

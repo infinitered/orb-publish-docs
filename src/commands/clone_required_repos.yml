@@ -5,7 +5,7 @@ steps:
       name: Set Git Username and Email
       command: <<include(scripts/set_git_user.sh)>>
   - checkout:
-      path: "$CIRCLE_WORKING_DIRECTORY/$SOURCE_REPO_DIRECTORY"
+      path: "$SOURCE_REPO_DIRECTORY"
   - run:
       name: Clone target repository
-      command: git clone $TARGET_REPO $CIRCLE_WORKING_DIRECTORY/$TARGET_REPO_DIRECTORY
+      command: git clone $TARGET_REPO $TARGET_REPO_DIRECTORY

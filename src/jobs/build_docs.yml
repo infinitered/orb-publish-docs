@@ -1,6 +1,6 @@
 description: "Test the documentation without pushing changes."
 executor: node/default
-working_directory: $HOME
+working_directory: ~/project/
 parameters:
   project_name:
     type: string
@@ -50,18 +50,18 @@ steps:
       name: Set Environment Variables
       environment:
         DESCRIPTION: <<parameters.description>>
-        FULL_SOURCE_DOCS_PATH: $HOME/<<parameters.source_repo_directory>>/<<parameters.source_docs_dir>>
+        FULL_SOURCE_DOCS_PATH: $CIRCLE_WORKING_DIRECTORY/<<parameters.source_repo_directory>>/<<parameters.source_docs_dir>>
         GIT_EMAIL: <<parameters.git_email>>
         GIT_USERNAME: <<parameters.git_username>>
         LABEL: <<parameters.label>>
         PROJECT_NAME: <<parameters.project_name>>
         SOURCE_DOCS_DIR: <<parameters.source_docs_dir>>
-        SOURCE_REPO_DIRECTORY: $HOME/<<parameters.source_repo_directory>>
+        SOURCE_REPO_DIRECTORY: $CIRCLE_WORKING_DIRECTORY/<<parameters.source_repo_directory>>
         TARGET_REPO: <<parameters.target_repo>>
-        TARGET_REPO_DIRECTORY: $HOME/<<parameters.target_repo_directory>>
+        TARGET_REPO_DIRECTORY: $CIRCLE_WORKING_DIRECTORY/<<parameters.target_repo_directory>>
       command: echo "Environment variables set."
   - clone_required_repos
   - install_and_cache_yarn_dependencies:
-      working_directory: $HOME/<<parameters.target_repo_directory>>
+      working_directory: $CIRCLE_WORKING_DIRECTORY/<<parameters.target_repo_directory>>
   - copy_docs_to_target
   - build_docusaurus

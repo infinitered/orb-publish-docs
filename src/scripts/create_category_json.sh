@@ -11,7 +11,7 @@ CreateCategoryJSON() {
       \"description\": \"$DESCRIPTION\"
     \}
   \}
-  " > "$HOME/$TARGET_REPO_DIRECTORY/docs/$PROJECT_NAME/_category_.json"
+  " > "$CIRCLE_WORKING_DIRECTORY/$TARGET_REPO_DIRECTORY/docs/$PROJECT_NAME/_category_.json"
 
   echo "_category_.json file created successfully."
 }

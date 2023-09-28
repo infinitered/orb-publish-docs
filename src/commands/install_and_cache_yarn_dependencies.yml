@@ -5,10 +5,13 @@ parameters:
     default: ""
     description: "The working directory where the repository is cloned."
 steps:
+  - run:
+      name: Compute checksum
+      command: echo 'export YARN_LOCK_CHECKSUM=$(checksum $TARGET_REPO_DIRECTORY/yarn.lock)' >> $BASH_ENV
   - restore_cache:
       name: Restore Yarn Cache
       keys:
-        - yarn-cache-$TARGET_REPO_DIRECTORY-{{ checksum "$TARGET_REPO_DIRECTORY/yarn.lock" }}
+        - yarn-cache-$TARGET_REPO_DIRECTORY-{{ .Environment.YARN_LOCK_CHECKSUM }}
   - run:
       name: Use local Yarn version
       command: <<include(scripts/use_local_yarn_version.sh)>>
@@ -17,6 +20,6 @@ steps:
       command: yarn install --immutable
   - save_cache:
       name: Save Yarn Cache
-      key: yarn-cache-{{ checksum "$TARGET_REPO_DIRECTORY/yarn.lock" }}
+      key: yarn-cache-$TARGET_REPO_DIRECTORY-{{ .Environment.YARN_LOCK_CHECKSUM }}
       paths:
         - $TARGET_REPO_DIRECTORY/.yarn/cache

@@ -5,23 +5,18 @@ parameters:
     default: ""
     description: "The working directory where the repository is cloned."
 steps:
-  - validate_param:
-      param_name: "working_directory"
-      param_value: "<<parameters.working_directory>>"
   - restore_cache:
       name: Restore Yarn Cache
       keys:
-        - yarn-cache-<<parameters.working_directory>>-{{ checksum "yarn.lock" }}
+        - yarn-cache-$TARGET_REPO_DIRECTORY-{{ checksum "$TARGET_REPO_DIRECTORY/yarn.lock" }}
   - run:
       name: Use local Yarn version
-      environment:
-        INSTALL_YARN_DEPS_WORKING_DIR: <<parameters.working_directory>>
       command: <<include(scripts/use_local_yarn_version.sh)>>
   - run:
       name: Install Dependencies
       command: yarn install --immutable
   - save_cache:
       name: Save Yarn Cache
-      key: yarn-cache-{{ checksum "yarn.lock" }}
+      key: yarn-cache-{{ checksum "$TARGET_REPO_DIRECTORY/yarn.lock" }}
       paths:
-        - <<parameters.working_directory>>/.yarn/cache
+        - $TARGET_REPO_DIRECTORY/.yarn/cache

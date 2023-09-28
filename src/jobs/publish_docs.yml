@@ -31,11 +31,11 @@ parameters:
     description: "The Git email for commit and push operations."
   target_repo_directory:
     type: string
-    default: "$CIRCLE_WORKING_DIRECTORY/target"
+    default: "target"
     description: "The directory where the clone of the target repo has been cloned."
   source_repo_directory:
     type: string
-    default: "$CIRCLE_WORKING_DIRECTORY/source"
+    default: "source"
     description: "The directory where the clone of the source repo has been cloned."
 steps:
   - validate_params:

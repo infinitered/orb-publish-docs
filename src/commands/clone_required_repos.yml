@@ -5,6 +5,9 @@ steps:
       name: Set Git Username and Email
       command: <<include(scripts/set_git_user.sh)>>
   - run:
+      name: Add github to known hosts
+      command: ssh-keyscan github.com >> ~/.ssh/known_hosts
+  - run:
       name: Clone source repository
       command: git clone $CIRCLE_REPOSITORY_URL $SOURCE_REPO_DIRECTORY
   - run:

@@ -14,7 +14,9 @@ steps:
         - yarn-cache-<<parameters.working_directory>>-{{ checksum "yarn.lock" }}
   - run:
       name: Use local Yarn version
-      command: echo "export PATH=<<parameters.working_directory>>/.yarn/releases:$PATH" >> $BASH_ENV
+      environment:
+        INSTALL_YARN_DEPS_WORKING_DIR: <<parameters.working_directory>>
+      command: <<include(scripts/use_local_yarn_version.sh)>>
   - run:
       name: Install Dependencies
       command: yarn install --immutable

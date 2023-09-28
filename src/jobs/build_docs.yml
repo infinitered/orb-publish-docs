@@ -32,7 +32,7 @@ parameters:
   target_repo_directory:
     type: string
     default: "target"
-    description: "The directory where the clone of the target repo has been cloned."
+    description: "The directory where the clone of the target repo will been cloned."
   source_repo_directory:
     type: string
     default: "source"

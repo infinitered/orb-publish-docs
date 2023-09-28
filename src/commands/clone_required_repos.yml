@@ -1,16 +1,11 @@
 description: >
   "Setup git and clone required repositories"
-parameters:
-  source_repo_directory:
-    type: string
-    default: source
-    description: "The directory where the clone of the target repo has been cloned."
 steps:
   - run:
       name: Set Git Username and Email
       command: <<include(scripts/set_git_user.sh)>>
   - checkout:
-      path: $CIRCLE_WORKING_DIRECTORY/<<parameters.source_repo_directory>>
+      path: "$CIRCLE_WORKING_DIRECTORY/$SOURCE_REPO_DIRECTORY"
   - run:
       name: Clone target repository
-      command: git clone $TARGET_REPO ~/$TARGET_REPO_DIRECTORY
+      command: git clone $TARGET_REPO $CIRCLE_WORKING_DIRECTORY/$TARGET_REPO_DIRECTORY

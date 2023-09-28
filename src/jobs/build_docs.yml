@@ -1,6 +1,5 @@
 description: "Test the documentation without pushing changes."
 executor: node/default
-working_directory: ~/project/
 parameters:
   project_name:
     type: string
@@ -59,9 +58,9 @@ steps:
         SOURCE_REPO_DIRECTORY: $CIRCLE_WORKING_DIRECTORY/<<parameters.source_repo_directory>>
         TARGET_REPO: <<parameters.target_repo>>
         TARGET_REPO_DIRECTORY: $CIRCLE_WORKING_DIRECTORY/<<parameters.target_repo_directory>>
-      command: echo "Environment variables set."
+      command: <<include(scripts/log_env_vars.sh)>>
   - clone_required_repos
   - install_and_cache_yarn_dependencies:
-      working_directory: $CIRCLE_WORKING_DIRECTORY/<<parameters.target_repo_directory>>
+      working_directory: <<parameters.target_repo_directory>>
   - copy_docs_to_target
   - build_docusaurus

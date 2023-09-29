@@ -1,6 +1,9 @@
 #! /bin/bash
 
-export TEST_DIR="$(pwd)/test_docs_dir_with_files"
+
+
+declare -x TEST_DIR=""
+TEST_DIR="$(pwd)/test_docs_dir_with_files"
 
 create_test_dir(){
     mkdir "$TEST_DIR"
@@ -22,7 +25,7 @@ source ./src/scripts/check_docs_exist.sh
 @test "It checks if documents exist in source directory and finds files" {
   create_test_files;
 
-  export SOURCE_DOCS_PATH="$TEST_DIR"
+  export FULL_SOURCE_DOCS_PATH="$TEST_DIR"
 
   # Run the function
   run CheckDocsExist
@@ -39,7 +42,7 @@ source ./src/scripts/check_docs_exist.sh
 
   ls() { :; }  # Mock ls to simulate an empty directory
 
-  export SOURCE_DOCS_PATH="$TEST_DIR"
+  export FULL_SOURCE_DOCS_PATH="$TEST_DIR"
 
   # Run the function
   run CheckDocsExist
@@ -53,7 +56,7 @@ source ./src/scripts/check_docs_exist.sh
 
 @test "It checks if documents exist in a non-existent source directory" {
   # Set a non-existent path
-  export SOURCE_DOCS_PATH="/path/to/nonexistent/directory"
+  export FULL_SOURCE_DOCS_PATH="/path/to/nonexistent/directory"
 
   # Run the function
   run CheckDocsExist

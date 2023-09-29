@@ -1,25 +1,23 @@
 description: "Install Yarn dependencies and cache them."
 parameters:
-  working_directory:
+  repo_directory:
     type: string
-    default: ""
-    description: "The working directory where the repository is cloned."
+    default: "./"
+    description: "The directory for repository operations."
 steps:
-  - run:
-      name: Compute checksum
-      command: echo 'export YARN_LOCK_CHECKSUM=$(checksum $TARGET_REPO_DIRECTORY/yarn.lock)' >> $BASH_ENV
   - restore_cache:
       name: Restore Yarn Cache
       keys:
-        - yarn-cache-$TARGET_REPO_DIRECTORY-{{ .Environment.YARN_LOCK_CHECKSUM }}
+        - yarn-cache-<< parameters.repo_directory >>-{{ checksum "<< parameters.repo_directory >>/yarn.lock" }}
   - run:
       name: Use local Yarn version
       command: <<include(scripts/use_local_yarn_version.sh)>>
   - run:
       name: Install Dependencies
+      working_directory: << parameters.repo_directory >>
       command: yarn install --immutable
   - save_cache:
       name: Save Yarn Cache
-      key: yarn-cache-$TARGET_REPO_DIRECTORY-{{ .Environment.YARN_LOCK_CHECKSUM }}
+      key: yarn-cache-<< parameters.repo_directory >>-{{ checksum "<< parameters.repo_directory >>/yarn.lock" }}
       paths:
-        - $TARGET_REPO_DIRECTORY/.yarn/cache
+        - << parameters.repo_directory >>/.yarn/cache

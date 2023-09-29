@@ -8,6 +8,7 @@ git commit -m "\"$FINAL_COMMIT_MESSAGE\"" || { echo "Git commit failed"; exit 1;
 git push origin main || { echo "Git push failed"; exit 1; }
 }
 
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+ORB_TEST_ENV="bats-core"
+if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
   CommitAndPushToTarget
 fi

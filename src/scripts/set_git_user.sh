@@ -7,7 +7,8 @@ git config --global user.name "$GIT_USERNAME" || { echo "Git username configurat
 git config --global user.email "$GIT_EMAIL" || { echo "Git email configuration failed"; exit 1; }
 }
 
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+ORB_TEST_ENV="bats-core"
+if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
   SetGitUser
 fi
 

@@ -41,7 +41,8 @@ ParseCommitInfo() {
   echo "$final_commit_message"
 }
 
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+ORB_TEST_ENV="bats-core"
+if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
   final_commit_message="$(ParseCommitInfo)"
   export FINAL_COMMIT_MESSAGE=$final_commit_message
 fi

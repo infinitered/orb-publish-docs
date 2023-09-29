@@ -1,0 +1,7 @@
+{
+  "label": "${LABEL}",
+  "link": {
+    "type": "generated-index",
+    "description": "${DESCRIPTION}"
+  }
+}

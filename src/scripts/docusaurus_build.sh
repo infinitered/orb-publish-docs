@@ -7,6 +7,7 @@ echo "Running Docusaurus build..."
 yarn build || { echo "Docusaurus build failed"; exit 1; }
 }
 
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+ORB_TEST_ENV="bats-core"
+if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
   DocusaurusBuild
 fi

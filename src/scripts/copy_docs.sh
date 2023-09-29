@@ -2,11 +2,12 @@
 
 CopyDocs() {
   echo "Copying documents to the target repository."
-  cp -R "$SOURCE_DOCS_PATH" "$TARGET_REPO_DIRECTORY/$TARGET_DOCS_PATH/$PROJECT_NAME"
+  cp -R "$FULL_SOURCE_DOCS_PATH" "$TARGET_REPO_DIRECTORY/$TARGET_DOCS_PATH/$PROJECT_NAME"
   echo "Documents copied successfully."
 }
 
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+ORB_TEST_ENV="bats-core"
+if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
   CopyDocs
 fi
 

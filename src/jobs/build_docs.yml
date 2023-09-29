@@ -60,6 +60,6 @@ steps:
       command: <<include(scripts/log_env_vars.sh)>>
   - clone_required_repos
   - install_and_cache_yarn_dependencies:
-      working_directory: <<parameters.target_repo_directory>>
+      repo_directory: <<parameters.target_repo_directory>>
   - copy_docs_to_target
   - build_docusaurus

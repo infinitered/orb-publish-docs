@@ -1,4 +1,16 @@
-#! /bin/bash
+#!/bin/bash
+
+# Function to log environment variables
+LogEnvironmentVariables() {
+  echo "Logging Environment Variables:"
+  echo "CIRCLE_REPOSITORY_URL: $CIRCLE_REPOSITORY_URL"
+  echo "SOURCE_REPO_DIRECTORY: $SOURCE_REPO_DIRECTORY"
+  echo "TARGET_REPO: $TARGET_REPO"
+  echo "TARGET_REPO_DIRECTORY: $TARGET_REPO_DIRECTORY"
+  echo "GIT_USERNAME: $GIT_USERNAME"
+  echo "GIT_EMAIL: $GIT_EMAIL"
+  echo "-----------------------------"
+}
 
 # Function to set the Git username and email
 SetGitUser() {
@@ -24,12 +36,19 @@ CloneSourceRepo() {
 CloneTargetRepo() {
   echo "Cloning target repository from $TARGET_REPO to $TARGET_REPO_DIRECTORY"
   git clone "$TARGET_REPO" "$TARGET_REPO_DIRECTORY" || { echo "Failed to clone target repository"; exit 1; }
+  ls "$TARGET_REPO_DIRECTORY"
 }
 
 # Check if the script is being sourced or executed directly
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+ORB_TEST_ENV="bats-core"
+if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
+  LogEnvironmentVariables
+  echo "Script is being executed directly"
+
   SetGitUser
   AddGithubToKnownHosts
   CloneSourceRepo
   CloneTargetRepo
+else
+  echo "Script is being sourced"
 fi

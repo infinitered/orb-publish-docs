@@ -1,5 +1,0 @@
-description: "Updates the projects.json with the package name and description."
-steps:
-  - run:
-      name: Update projects.json
-      command: <<include(scripts/update_project_json.sh)>>

@@ -1,8 +1,6 @@
-TARGET_JSON="./projects.json"
-PACKAGE_NAME="$PACKAGE_NAME" # Assuming this env variable is set
-PACKAGE_DESCRIPTION="$PACKAGE_DESCRIPTION" # Assuming this env variable is set
+#!/bin/bash
 
-echo "-------- Start of update_project_json.sh --------"
+TARGET_JSON="$TARGET_REPO_DIRECTORY/projects.json"
 
 # Validate project name
 if [[ "$PACKAGE_NAME" =~ [\"\'\:\*\?\<\>\|\\\/] || "$PACKAGE_NAME" == "." || "$PACKAGE_NAME" == ".." || ${#PACKAGE_NAME} -gt 255 || "$PACKAGE_NAME" =~ ^- || "$PACKAGE_NAME" =~ $'\n' ]]; then
@@ -51,18 +49,4 @@ else
     echo "[ERROR] Failed to update $TARGET_JSON. Exiting script."
     exit 1
 fi
-
-echo "-------- End of update_project_json.sh --------"
-Major changes made:
-
-Added checks for . and .. as directory names.
-Checked if the length of PACKAGE_NAME exceeds 255 characters.
-Checked for project names that start with -.
-Checked for newline characters in the project name.
-Added a basic list of reserved JS object keys to prevent overwriting. This list can be expanded if needed.
-The above validations provide a solid baseline, but depending on the specific use case and environment, you may need to make additional adjustments or add more checks.
-
-
-
-
 

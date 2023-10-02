@@ -7,7 +7,7 @@ TMP_FILE="tmp_$$.json"
 trap 'rm -f "$TMP_FILE"' EXIT
 
 # Validate project name
-if [[ "$PACKAGE_NAME" =~ [\"\'\:\*\?\<\>\|\\\/] || "$PACKAGE_NAME" == "." || "$PACKAGE_NAME" == ".." || ${#PACKAGE_NAME} -gt 255 || "$PACKAGE_NAME" =~ ^- || "$PACKAGE_NAME" =~ $'\n' ]]; then
+if [[ "$PROJECT_NAME" =~ [\"\'\:\*\?\<\>\|\\\/] || "$PROJECT_NAME" == "." || "$PROJECT_NAME" == ".." || ${#PROJECT_NAME} -gt 255 || "$PROJECT_NAME" =~ ^- || "$PROJECT_NAME" =~ $'\n' ]]; then
     echo "[ERROR] Error: Project-name must be a valid directory name and js-object key."
     exit 1
 fi
@@ -39,14 +39,14 @@ else
     echo "[INFO] $TARGET_JSON found."
 fi
 
-echo "NEW JQ LOGIC -- V1"
-
 # Construct the jq query
-JQ_QUERY=".[\"$PACKAGE_NAME\"] = {\"description\": \"$PACKAGE_DESCRIPTION\", \"label\": \"$LABEL\"}"
+JQ_QUERY=".[\"$PROJECT_NAME\"] = {\"description\": \"$DESCRIPTION\", \"label\": \"$LABEL\"}"
+
+
 
 # Use the constructed query with jq
-if echo "$JQ_QUERY" | jq -f- "$TARGET_JSON" > "$TMP_FILE" && mv "$TMP_FILE" "$TARGET_JSON"; then
-    echo "[SUCCESS] $TARGET_JSON has been updated successfully with package name: $PACKAGE_NAME, description: $PACKAGE_DESCRIPTION, and label: $LABEL."
+if cat "$TARGET_JSON" | jq "$JQ_QUERY" > "$TMP_FILE" && mv "$TMP_FILE" "$TARGET_JSON"; then
+    echo "[SUCCESS] $TARGET_JSON has been updated successfully with package name: $PROJECT_NAME, description: $DESCRIPTION, and label: $LABEL."
 else
     echo "[ERROR] Failed to update $TARGET_JSON. Exiting script."
     exit 1

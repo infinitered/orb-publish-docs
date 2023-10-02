@@ -1,6 +1,10 @@
 #!/bin/bash
 
 TARGET_JSON="$TARGET_REPO_DIRECTORY/projects.json"
+TMP_FILE="tmp_$$.json"
+
+# Trap to cleanup temporary files in case of an error
+trap 'rm -f "$TMP_FILE"' EXIT
 
 # Validate project name
 if [[ "$PACKAGE_NAME" =~ [\"\'\:\*\?\<\>\|\\\/] || "$PACKAGE_NAME" == "." || "$PACKAGE_NAME" == ".." || ${#PACKAGE_NAME} -gt 255 || "$PACKAGE_NAME" =~ ^- || "$PACKAGE_NAME" =~ $'\n' ]]; then
@@ -30,6 +34,12 @@ if ! command -v jq &> /dev/null; then
         echo "[ERROR] Failed to install jq. Exiting script."
         exit 1
     fi
+
+    # Re-check if jq is installed after attempting to install it
+    if ! command -v jq &> /dev/null; then
+        echo "[ERROR] jq is still not available. Exiting script."
+        exit 1
+    fi
 else
     echo "[INFO] jq is already installed."
 fi
@@ -43,10 +53,9 @@ else
 fi
 
 # Use jq to update or add the package name and description.
-if jq --arg name "$PACKAGE_NAME" --arg desc "$PACKAGE_DESCRIPTION" ' .[$name]=$desc ' "$TARGET_JSON" > "tmp_$$.json" && mv "tmp_$$.json" "$TARGET_JSON"; then
-    echo "[SUCCESS] $TARGET_JSON has been updated successfully with package name: $PACKAGE_NAME and description: $PACKAGE_DESCRIPTION."
+if jq --arg name "$PACKAGE_NAME" --arg desc "$PACKAGE_DESCRIPTION" --arg label "$LABEL" '.[$name] = {"description": $desc, "label": $label}' "$TARGET_JSON" > "$TMP_FILE" && mv "$TMP_FILE" "$TARGET_JSON"; then
+    echo "[SUCCESS] $TARGET_JSON has been updated successfully with package name: $PACKAGE_NAME, description: $PACKAGE_DESCRIPTION, and label: $LABEL."
 else
     echo "[ERROR] Failed to update $TARGET_JSON. Exiting script."
     exit 1
 fi
-

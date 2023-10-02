@@ -42,7 +42,7 @@ jobs:
             # Run Bats tests
             bats ./src/tests/*.bats
 workflows:
-  test-deploy:
+  test-and-publish:
     jobs:
       # Make sure to include "filters: *filters" in every test job you want to run as part of your deployment.
       # Test your orb's commands in a custom job and test your orb's jobs directly as a part of this workflow.

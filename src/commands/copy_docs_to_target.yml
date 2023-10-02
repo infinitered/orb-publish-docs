@@ -13,3 +13,6 @@ steps:
   - run:
       name: "Create _category_.json"
       command: <<include(scripts/create_category_json.sh)>>
+  - run:
+      name: "Update projects.json"
+      command: <<include(scripts/update_projects_json.sh)>>

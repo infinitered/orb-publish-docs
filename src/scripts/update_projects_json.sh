@@ -12,19 +12,6 @@ if [[ "$PACKAGE_NAME" =~ [\"\'\:\*\?\<\>\|\\\/] || "$PACKAGE_NAME" == "." || "$P
     exit 1
 fi
 
-# Check reserved JS object keys - can expand this list as needed
-declare -A reserved_keys=(
-  ["__proto__"]=1
-  ["__defineGetter__"]=1
-  ["__defineSetter__"]=1
-  ["constructor"]=1
-)
-
-if [[ ${reserved_keys["$PACKAGE_NAME"]} ]]; then
-    echo "[ERROR] Error: $PACKAGE_NAME is a reserved JS object key."
-    exit 1
-fi
-
 # Check if jq is installed, if not, install it.
 if ! command -v jq &> /dev/null; then
     echo "[INFO] jq could not be found. Attempting to install..."

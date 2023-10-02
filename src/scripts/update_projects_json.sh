@@ -45,7 +45,7 @@ JQ_QUERY=".[\"$PROJECT_NAME\"] = {\"description\": \"$DESCRIPTION\", \"label\": 
 
 
 # Use the constructed query with jq
-if cat "$TARGET_JSON" | jq "$JQ_QUERY" > "$TMP_FILE" && mv "$TMP_FILE" "$TARGET_JSON"; then
+if jq "$JQ_QUERY" < "$TARGET_JSON" > "$TMP_FILE" && mv "$TMP_FILE" "$TARGET_JSON"; then
     echo "[SUCCESS] $TARGET_JSON has been updated successfully with package name: $PROJECT_NAME, description: $DESCRIPTION, and label: $LABEL."
 else
     echo "[ERROR] Failed to update $TARGET_JSON. Exiting script."

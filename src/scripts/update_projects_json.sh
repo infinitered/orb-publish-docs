@@ -40,7 +40,7 @@ else
 fi
 
 # Use jq to update or add the package name and description.
-if jq --arg name "$PACKAGE_NAME" --arg desc "$PACKAGE_DESCRIPTION" --arg label "$LABEL" '.["$name"] = {"description": $desc, "label": $label}' "$TARGET_JSON" > "$TMP_FILE" && mv "$TMP_FILE" "$TARGET_JSON"; then
+if jq --arg name "$PACKAGE_NAME" --arg desc "$PACKAGE_DESCRIPTION" --arg label "$LABEL" '.["\($name)"] = {"description": \($desc), "label": \($label)}' "$TARGET_JSON" > "$TMP_FILE" && mv "$TMP_FILE" "$TARGET_JSON"; then
     echo "[SUCCESS] $TARGET_JSON has been updated successfully with package name: $PACKAGE_NAME, description: $PACKAGE_DESCRIPTION, and label: $LABEL."
 else
     echo "[ERROR] Failed to update $TARGET_JSON. Exiting script."

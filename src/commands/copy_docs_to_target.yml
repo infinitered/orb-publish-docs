@@ -12,7 +12,5 @@ steps:
       command: <<include(scripts/move_static_content.sh)>>
   - run:
       name: "Create _category_.json"
-      command: <<include(scripts/create_category_json.sh)>>
-  - run:
-      name: "Update projects.json"
-      command: <<include(scripts/update_projects_json.sh)>>
+      command: <<include(scripts/create_project_json.sh)>>
+

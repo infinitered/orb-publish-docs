@@ -8,7 +8,11 @@ parameters:
   source_docs_dir:
     type: string
     default: "docs"
-    description: "The path to the ir-docs folder in the repository. Defaults to './ir-docs'."
+    description: "The path to the ir-docs folder in the repository. Defaults to './docs'."
+  target_docs_dir:
+    type: string
+    default: "docs"
+    description: "The path to the ir-docs folder in the repository. Defaults to './docs'."
   label:
     type: string
     default: ""
@@ -56,6 +60,7 @@ steps:
         SOURCE_DOCS_DIR: <<parameters.source_docs_dir>>
         SOURCE_REPO_DIRECTORY_PARAM: <<parameters.source_repo_directory>>
         TARGET_REPO: <<parameters.target_repo>>
+        TARGET_DOCS_DIR: <<parameters.target_docs_dir>>
         TARGET_REPO_DIRECTORY_PARAM: <<parameters.target_repo_directory>>
       command: <<include(scripts/log_env_vars.sh)>>
   - clone_required_repos

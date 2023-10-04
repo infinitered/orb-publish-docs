@@ -13,4 +13,7 @@ steps:
   - run:
       name: "Create _project_.json"
       command: <<include(scripts/create_project_json.sh)>>
-
+  - store_artifacts:
+      path: /docs
+  - store_artifacts:
+      path: /static

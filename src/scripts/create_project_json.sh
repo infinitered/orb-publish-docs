@@ -3,11 +3,14 @@
 # Assumes LABEL, DESCRIPTION, TARGET_REPO_DIRECTORY, and PROJECT_NAME are environment variables
 
 CreateProjectJSONFromTemplate() {
+    # Ensure the target directory exists
+    mkdir -p "$TARGET_REPO_DIRECTORY/docs/$PROJECT_NAME/"
+
     # Inlined template with placeholders
     # shellcheck disable=SC2016
-    TEMPLATE='{"label": "${LABEL}","description": "${DESCRIPTION}", projectName:"${PROJECT_NAME}"}'
+    TEMPLATE='{"label": "${LABEL}","description": "${DESCRIPTION}", "projectName":"${PROJECT_NAME}"}'
 
-    # Substitute the variables in the template and write to target location
+# Substitute the variables in the template and write to target location
     echo "$TEMPLATE" | sed \
         -e "s/\${LABEL}/$LABEL/" \
         -e "s/\${DESCRIPTION}/$DESCRIPTION/" \

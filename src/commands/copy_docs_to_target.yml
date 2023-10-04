@@ -11,9 +11,9 @@ steps:
       name: "Move static content to appropriate folder"
       command: <<include(scripts/move_static_content.sh)>>
   - run:
-      name: "Create _project_.json"
-      command: <<include(scripts/create_project_json.sh)>>
+      name: "Create _category_.json"
+      command: <<include(scripts/create_category_json.sh)>>
   - store_artifacts:
-      path: /docs
+      path: ./target/docs
   - store_artifacts:
-      path: /static
+      path: ./target/static

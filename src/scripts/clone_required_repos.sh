@@ -28,8 +28,8 @@ AddGithubToKnownHosts() {
 
 # Function to clone the source repository
 CloneSourceRepo() {
-  echo "Cloning source repository from $CIRCLE_REPOSITORY_URL to $SOURCE_REPO_DIRECTORY"
-  git clone "$CIRCLE_REPOSITORY_URL" "$SOURCE_REPO_DIRECTORY" || { echo "Failed to clone source repository"; exit 1; }
+  echo "Cloning the $CIRCLE_BRANCH branch of source repository ($CIRCLE_REPOSITORY_URL) to $SOURCE_REPO_DIRECTORY"
+  git clone --branch "$CIRCLE_BRANCH" "$CIRCLE_REPOSITORY_URL" "$SOURCE_REPO_DIRECTORY" || { echo "Failed to clone source repository"; exit 1; }
 }
 
 # Function to clone the target repository

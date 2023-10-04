@@ -2,22 +2,23 @@
 
 # Assumes LABEL, DESCRIPTION, TARGET_REPO_DIRECTORY, and PROJECT_NAME are environment variables
 
-CreateCategoryJSONFromTemplate() {
+CreateProjectJSONFromTemplate() {
     # Inlined template with placeholders
     # shellcheck disable=SC2016
-    TEMPLATE='{"label": "${LABEL}","link": {"type": "generated-index","description": "${DESCRIPTION}"}}'
+    TEMPLATE='{"label": "${LABEL}","description": "${DESCRIPTION}", projectName:"${PROJECT_NAME}"}'
 
     # Substitute the variables in the template and write to target location
     echo "$TEMPLATE" | sed \
         -e "s/\${LABEL}/$LABEL/" \
         -e "s/\${DESCRIPTION}/$DESCRIPTION/" \
-        > "$TARGET_REPO_DIRECTORY/docs/$PROJECT_NAME/_category_.json"
+        -e "s/\${PROJECT_NAME}/$PROJECT_NAME/" \
+        > "$TARGET_REPO_DIRECTORY/docs/$PROJECT_NAME/_project_.json"
 
-    echo "_category_.json file created successfully."
+    echo "_project_.json file created successfully."
 }
 
 # Check for bats
 ORB_TEST_ENV="bats-core"
 if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
-    CreateCategoryJSONFromTemplate
+    CreateProjectJSONFromTemplate
 fi

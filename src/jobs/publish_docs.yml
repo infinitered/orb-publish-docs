@@ -8,7 +8,11 @@ parameters:
   source_docs_dir:
     type: string
     default: "docs"
-    description: "The path to the ir-docs folder in the repository. Defaults to './ir-docs'."
+    description: "The path to the ir-docs folder in the repository. Defaults to './docs'."
+  target_docs_dir:
+    type: string
+    default: "docs"
+    description: "The path to the ir-docs folder in the repository. Defaults to './docs'."
   label:
     type: string
     default: ""
@@ -20,7 +24,7 @@ parameters:
   target_repo:
     type: string
     default: ""
-    description: "The GitHub URL of the target repository where the documentation resides."
+    description: "The GitHub SSH URL of the target repository where the documentation resides."
   git_username:
     type: string
     default: ""
@@ -32,7 +36,7 @@ parameters:
   target_repo_directory:
     type: string
     default: "target"
-    description: "The directory where the clone of the target repo has been cloned."
+    description: "The directory where the clone of the target repo will been cloned."
   source_repo_directory:
     type: string
     default: "source"

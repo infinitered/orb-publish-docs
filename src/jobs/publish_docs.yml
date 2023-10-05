@@ -53,15 +53,15 @@ steps:
       name: Set Environment Variables
       environment:
         DESCRIPTION: <<parameters.description>>
-        FULL_SOURCE_DOCS_PATH: <<parameters.source_repo_directory>>/<<parameters.source_docs_dir>>
         GIT_EMAIL: <<parameters.git_email>>
         GIT_USERNAME: <<parameters.git_username>>
         LABEL: <<parameters.label>>
         PROJECT_NAME: <<parameters.project_name>>
         SOURCE_DOCS_DIR: <<parameters.source_docs_dir>>
-        SOURCE_REPO_DIRECTORY: <<parameters.source_repo_directory>>
+        SOURCE_REPO_DIRECTORY_PARAM: <<parameters.source_repo_directory>>
         TARGET_REPO: <<parameters.target_repo>>
-        TARGET_REPO_DIRECTORY: <<parameters.target_repo_directory>>
+        TARGET_DOCS_DIR: <<parameters.target_docs_dir>>
+        TARGET_REPO_DIRECTORY_PARAM: <<parameters.target_repo_directory>>
       command: <<include(scripts/log_env_vars.sh)>>
   - clone_required_repos
   - copy_docs_to_target

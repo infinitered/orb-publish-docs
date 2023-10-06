@@ -11,7 +11,7 @@ if git diff-index --quiet HEAD --; then
     exit 0
 
 else
-    git commit -m "\"$FINAL_COMMIT_MESSAGE\"" || { echo "Git commit failed"; exit 1; }
+    git commit -m "$FINAL_COMMIT_MESSAGE" || { echo "Git commit failed"; exit 1; }
     git push origin main || { echo "Git push failed"; exit 1; }
 fi
 }

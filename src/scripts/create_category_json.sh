@@ -12,7 +12,7 @@ CreateCategoryJSON() {
 
 # Substitute the variables in the template and write to target location
     echo "$TEMPLATE" | sed \
-        -e "s/\${LABEL}/$LABEL/" \
+        -e "s/\${LABEL}/$LABEL/g" \
         -e "s/\${DESCRIPTION}/$DESCRIPTION/" \
         -e "s/\${PROJECT_NAME}/$PROJECT_NAME/" \
         > "$TARGET_REPO_DIRECTORY/docs/$PROJECT_NAME/_category_.json"

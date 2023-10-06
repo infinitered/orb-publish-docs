@@ -1,8 +1,29 @@
 #! /bin/bash
 
-# Mock git command to just echo the arguments
+# Mock git command
 git() {
-  echo "$@"
+  # Capture the first argument
+  local cmd=$1
+
+  # Handle different git commands
+  case $cmd in
+    add)
+      echo "add $2"  # assuming $2 captures the next argument like 'docs' or 'static'
+      ;;
+    diff-index)
+      # This mock always indicates that there are changes.
+      return 1
+      ;;
+    commit)
+      echo "commit -m \"$3\""  # assuming $3 captures the commit message
+      ;;
+    push)
+      echo "push $2 $3"  # assuming $2 captures 'origin' and $3 captures 'main'
+      ;;
+    *)
+      echo "$@"
+      ;;
+  esac
 }
 
 export WORKING_DIR="."
@@ -29,52 +50,44 @@ source ./src/scripts/commit_and_push_to_target.sh
   # Run the function
   run CommitAndPushToTarget
 
-  # Debug: Print output and status
-  echo "Debug: Output = '$output'"
-  echo "Debug: Status = '$status'"
-
-  # Validate output or status
+  # Validate output
   [[ "$output" =~ Changing\ directory\ to\ $WORKING_DIR ]]
-  [ "$status" -eq 0 ]  # assuming the script should exit successfully
+  [ "$status" -eq 0 ]
 }
 
-@test "It runs git add and succeeds" {
+
+@test "It runs git add for docs and static and succeeds" {
   # Mock environment variables
   export TARGET_REPO_DIRECTORY=$WORKING_DIR
   export FINAL_COMMIT_MESSAGE="Commit message"
 
   # Run the function
   run CommitAndPushToTarget
-
-  echo "Debug: Output = '$output'"
 
   # Validate output
   [[ "$output" =~ add\ docs ]]
+  [[ "$output" =~ add\ static ]]
 }
 
-@test "It runs git commit and succeeds" {
+@test "It runs git commit with the correct message and succeeds" {
   # Mock environment variables
   export TARGET_REPO_DIRECTORY=$WORKING_DIR
   export FINAL_COMMIT_MESSAGE="Commit message"
 
   # Run the function
   run CommitAndPushToTarget
-
-  echo "Debug: Output = '$output'"
 
   # Validate output
   echo "$output" | grep -qE "commit -m \"Commit message\""
 }
 
-@test "It runs git push and succeeds" {
+@test "It runs git push to the main branch and succeeds" {
   # Mock environment variables
   export TARGET_REPO_DIRECTORY=$WORKING_DIR
   export FINAL_COMMIT_MESSAGE="Commit message"
 
   # Run the function
   run CommitAndPushToTarget
-
-  echo "Debug: Output = '$output'"
 
   # Validate output
   [[ "$output" =~ push\ origin\ main ]]

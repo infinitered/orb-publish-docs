@@ -14,7 +14,7 @@ PackAndPublish() {
   fi
 
   # Generate a random 4-letter suffix with LC_ALL=C specifically for tr
-  random_suffix=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-z' | fold -w 4 | head -n 1)
+  random_suffix=$(LC_ALL=C tr -dc 'a-z' < /dev/urandom | fold -w 4 | head -n 1)
 
   # Append the random suffix to version_suffix
   version_suffix="${version_suffix}-${random_suffix}"
@@ -26,4 +26,3 @@ PackAndPublish() {
 }
 
 PackAndPublish "$@"
-

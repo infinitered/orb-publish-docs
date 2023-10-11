@@ -1,11 +1,14 @@
 #! /bin/bash
+# shellcheck disable=SC2031
+# shellcheck disable=SC2030
+
 
 COMMIT_MESSAGE_WITH_PR="Fix: Commit for testing (#42)"
 
 # Mocking git commands and basename
 git() {
   case "$1" in
-    log) echo $COMMIT_MESSAGE_WITH_PR;;
+    log) echo "$COMMIT_MESSAGE_WITH_PR";;
     rev-parse) echo "1234567890abcdef";;
     config) echo "https://github.com/infinitered/sample-repo.git";;
     *) return 1;;
@@ -44,6 +47,7 @@ source ./src/scripts/parse_commit_info.sh
 }
 
 @test "It fetches PR number from commit message" {
+  # shellcheck disable=SC2030
   export COMMIT_MESSAGE=$COMMIT_MESSAGE_WITH_PR
   run ExtractPRNumber
   >&2 echo "Debug: Output = '$output'"  # Verbose log
@@ -69,7 +73,6 @@ source ./src/scripts/parse_commit_info.sh
 @test "It constructs commit link and commit message when PR number is absent" {
   # Unset PR number to simulate absence
   unset PR_NUMBER
-  # shellcheck disable=SC2031
   export REPO_NAME="sample-repo"
   export COMMIT_HASH="1234567890abcdef"
   export COMMIT_MESSAGE="Fix: Commit for testing"

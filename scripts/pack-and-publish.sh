@@ -14,6 +14,8 @@ PackAndPublish() {
   fi
 
   # Generate a random 4-letter suffix with LC_ALL=C specifically for tr
+  # disable "lower" shellcheck rule because we only want a-z
+  # shellcheck disable=SC2018
   random_suffix=$(LC_ALL=C tr -dc 'a-z' < /dev/urandom | fold -w 4 | head -n 1)
 
   # Append the random suffix to version_suffix

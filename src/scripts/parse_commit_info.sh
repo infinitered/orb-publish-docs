@@ -34,11 +34,6 @@ ConstructCommitMessage() {
   local PR_NUMBER="$3"
   local COMMIT_HASH="$4"
 
-  >&2 echo "Debug: REPO_NAME in ConstructCommitMessage = $REPO_NAME"
-  >&2 echo "Debug: COMMIT_MESSAGE in ConstructCommitMessage = $COMMIT_MESSAGE"
-  >&2 echo "Debug: PR_NUMBER in ConstructCommitMessage = $PR_NUMBER"
-
-
   if [ -n "$PR_NUMBER" ]; then
     PR_LINK="https://github.com/infinitered/$REPO_NAME/pull/$PR_NUMBER"
     echo "orb($REPO_NAME): $COMMIT_MESSAGE $PR_LINK"

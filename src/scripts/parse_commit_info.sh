@@ -32,6 +32,13 @@ ConstructCommitMessage() {
 
 ParseCommitInfo() {
   cd "$SOURCE_REPO_DIRECTORY" || { echo "Changing directory failed"; exit 1; }
+
+  declare -g COMMIT_MESSAGE
+  declare -g COMMIT_HASH
+  declare -g REPO_URL
+  declare -g REPO_NAME
+  declare -g PR_NUMBER
+
   COMMIT_MESSAGE=$(FetchCommitMessage)
   COMMIT_HASH=$(FetchCommitHash)
   REPO_URL=$(FetchRepoURL)

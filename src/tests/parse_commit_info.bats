@@ -85,7 +85,7 @@ source ./src/scripts/parse_commit_info.sh
 
 @test "It parses and constructs the final commit message" {
   run ParseCommitInfo
-  echo "Debug: Output = '$output'"  # Verbose log
-  [[ $output == "orb: sample-repo -- Fix: Commit for testing (#42) -- https://github.com/infinitered/sample-repo/pull/42" ]]
+  final_msg=$(echo "$output" | grep "^Final constructed message:" | cut -d ':' -f 2- | xargs)
+  echo "Debug: Extracted Final Commit Message = '$final_msg'"
+  [[ $final_msg == "orb(sample-repo): Fix: Commit for testing (#42) https://github.com/infinitered/sample-repo/pull/42" ]]
 }
-

@@ -1,5 +1,13 @@
 #! /bin/bash
 
+# Global variable declarations
+COMMIT_MESSAGE=""
+COMMIT_HASH=""
+REPO_URL=""
+REPO_NAME=""
+PR_NUMBER=""
+final_commit_message=""
+
 FetchCommitMessage() {
   git log -1 --pretty=%B || { echo "Fetching commit message failed"; exit 1; }
 }
@@ -21,32 +29,39 @@ ExtractPRNumber() {
 }
 
 ConstructCommitMessage() {
+  local REPO_NAME="$1"
+  local COMMIT_MESSAGE="$2"
+  local PR_NUMBER="$3"
+  local COMMIT_HASH="$4"
+
+  >&2 echo "Debug: REPO_NAME in ConstructCommitMessage = $REPO_NAME"
+  >&2 echo "Debug: COMMIT_MESSAGE in ConstructCommitMessage = $COMMIT_MESSAGE"
+  >&2 echo "Debug: PR_NUMBER in ConstructCommitMessage = $PR_NUMBER"
+
+
   if [ -n "$PR_NUMBER" ]; then
     PR_LINK="https://github.com/infinitered/$REPO_NAME/pull/$PR_NUMBER"
-    echo "orb: $REPO_NAME -- $COMMIT_MESSAGE -- $PR_LINK"
+    echo "orb($REPO_NAME): $COMMIT_MESSAGE $PR_LINK"
   else
     COMMIT_LINK="https://github.com/infinitered/$REPO_NAME/commit/$COMMIT_HASH"
-    echo "orb: $REPO_NAME -- $COMMIT_MESSAGE -- $COMMIT_LINK"
+    echo "orb($REPO_NAME): $COMMIT_MESSAGE $COMMIT_LINK"
   fi
 }
 
 ParseCommitInfo() {
   cd "$SOURCE_REPO_DIRECTORY" || { echo "Changing directory failed"; exit 1; }
 
-  declare -g COMMIT_MESSAGE
-  declare -g COMMIT_HASH
-  declare -g REPO_URL
-  declare -g REPO_NAME
-  declare -g PR_NUMBER
+  # Diagnostic output
+  echo "Current directory: $(pwd)"
+  ls -al
 
   COMMIT_MESSAGE=$(FetchCommitMessage)
   COMMIT_HASH=$(FetchCommitHash)
   REPO_URL=$(FetchRepoURL)
   REPO_NAME=$(ParseRepoName)
   PR_NUMBER=$(ExtractPRNumber)
-
-  final_commit_message=$(ConstructCommitMessage)
-  echo "$final_commit_message"
+  final_commit_message=$(ConstructCommitMessage "$REPO_NAME" "$COMMIT_MESSAGE" "$PR_NUMBER" "$COMMIT_HASH")
+  echo "Final constructed message: $final_commit_message"
 }
 
 ORB_TEST_ENV="bats-core"
@@ -62,4 +77,5 @@ if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
   echo "final_commit_message: $final_commit_message"
 
   export FINAL_COMMIT_MESSAGE=$final_commit_message
+  echo "export FINAL_COMMIT_MESSAGE='$final_commit_message'" >> "$BASH_ENV"
 fi

@@ -61,7 +61,7 @@ source ./src/scripts/parse_commit_info.sh
   export REPO_NAME="sample-repo"
   export COMMIT_MESSAGE="Fix: Commit for testing (#42)"
 
-  run ConstructCommitMessage
+  run ConstructCommitMessage "$REPO_NAME" "$COMMIT_MESSAGE" "$PR_NUMBER" "$COMMIT_HASH"
   >&2 echo "Debug: Output = '$output'"  # Verbose log
   [[ $output =~ https://github.com/infinitered/sample-repo/pull/42 ]]
   [[ $output =~ orb:\ sample-repo\ --\ Fix:\ Commit\ for\ testing\ \(#42\)\ --\ https://github.com/infinitered/sample-repo/pull/42 ]]

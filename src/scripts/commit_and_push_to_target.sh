@@ -10,6 +10,8 @@ if git diff-index --quiet HEAD --; then
     echo "No changes"
     exit 0
 
+echo "FINAL_COMMIT_MESSAGE: $FINAL_COMMIT_MESSAGE"
+
 else
     git commit -m "$FINAL_COMMIT_MESSAGE" || { echo "Git commit failed"; exit 1; }
     git push origin main || { echo "Git push failed"; exit 1; }

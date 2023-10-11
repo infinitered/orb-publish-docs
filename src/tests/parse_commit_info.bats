@@ -2,8 +2,9 @@
 # shellcheck disable=SC2031
 # shellcheck disable=SC2030
 
-
-COMMIT_MESSAGE_WITH_PR="Fix: Commit for testing (#42)"
+setup() {
+  export COMMIT_MESSAGE_WITH_PR="Fix: Commit for testing (#42)"
+}
 
 # Mocking git commands and basename
 git() {
@@ -91,4 +92,14 @@ source ./src/scripts/parse_commit_info.sh
   final_msg=$(echo "$output" | grep "^Final constructed message:" | cut -d ':' -f 2- | xargs)
   >&2 echo "Debug: Extracted Final Commit Message = '$final_msg'"
   [[ $final_msg == "orb(sample-repo): Fix: Commit for testing (#42) https://github.com/infinitered/sample-repo/pull/42" ]]
+}
+
+
+teardown() {
+  unset COMMIT_MESSAGE_WITH_PR
+  unset PR_NUMBER
+  unset REPO_NAME
+  unset COMMIT_MESSAGE
+  unset COMMIT_HASH
+  unset final_msg
 }

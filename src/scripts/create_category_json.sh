@@ -10,10 +10,7 @@ CreateCategoryJSON() {
     # shellcheck disable=SC2016
     TEMPLATE='{
   "label": "${LABEL}",
-  "link": {
-    "type": "generated-index",
-    "title": "${LABEL}"
-  },
+  "link": null,
   "customProps": {
     "description": "${DESCRIPTION}",
     "projectName": "${PROJECT_NAME}",
@@ -26,9 +23,9 @@ CreateCategoryJSON() {
 
     # Substitute the variables in the template and write to target location
     echo "$TEMPLATE" | sed \
-        -e "s/\${LABEL}/$LABEL/g" \
-        -e "s/\${DESCRIPTION}/$DESCRIPTION/g" \
-        -e "s/\${PROJECT_NAME}/$PROJECT_NAME/g" \
+        -e "s|\${LABEL}|$LABEL|g" \
+        -e "s|\${DESCRIPTION}|$DESCRIPTION|g" \
+        -e "s|\${PROJECT_NAME}|$PROJECT_NAME|g" \
         > "$TARGET_REPO_DIRECTORY/docs/$PROJECT_NAME/_category_.json"
 
     echo "_category_.json file created successfully."

@@ -45,6 +45,14 @@ ParseCommitInfo() {
 ORB_TEST_ENV="bats-core"
 if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
   final_commit_message="$(ParseCommitInfo)"
+
+  # Logging statements to inspect variables
+  echo "COMMIT_MESSAGE: $COMMIT_MESSAGE"
+  echo "COMMIT_HASH: $COMMIT_HASH"
+  echo "REPO_URL: $REPO_URL"
+  echo "REPO_NAME: $REPO_NAME"
+  echo "PR_NUMBER: $PR_NUMBER"
+  echo "final_commit_message: $final_commit_message"
+
   export FINAL_COMMIT_MESSAGE=$final_commit_message
 fi
-

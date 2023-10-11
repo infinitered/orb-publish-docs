@@ -18,5 +18,6 @@ fi
 
 ORB_TEST_ENV="bats-core"
 if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
+  echo "Final Commit Message: '$FINAL_COMMIT_MESSAGE'"
   CommitAndPushToTarget
 fi

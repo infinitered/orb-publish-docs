@@ -46,17 +46,13 @@ ConstructCommitMessage() {
 ParseCommitInfo() {
   cd "$SOURCE_REPO_DIRECTORY" || { echo "Changing directory failed"; exit 1; }
 
-  # Diagnostic output
-  echo "Current directory: $(pwd)"
-  ls -al
-
   COMMIT_MESSAGE=$(FetchCommitMessage)
   COMMIT_HASH=$(FetchCommitHash)
   REPO_URL=$(FetchRepoURL)
   REPO_NAME=$(ParseRepoName)
   PR_NUMBER=$(ExtractPRNumber)
   final_commit_message=$(ConstructCommitMessage "$REPO_NAME" "$COMMIT_MESSAGE" "$PR_NUMBER" "$COMMIT_HASH")
-  echo "Final constructed message: $final_commit_message"
+  echo "$final_commit_message"
 }
 
 ORB_TEST_ENV="bats-core"

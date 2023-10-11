@@ -1,11 +1,15 @@
 #! /bin/bash
+# shellcheck disable=SC2031
+# shellcheck disable=SC2030
 
-COMMIT_MESSAGE_WITH_PR="Fix: Commit for testing (#42)"
+setup() {
+  export COMMIT_MESSAGE_WITH_PR="Fix: Commit for testing (#42)"
+}
 
 # Mocking git commands and basename
 git() {
   case "$1" in
-    log) echo $COMMIT_MESSAGE_WITH_PR;;
+    log) echo "$COMMIT_MESSAGE_WITH_PR";;
     rev-parse) echo "1234567890abcdef";;
     config) echo "https://github.com/infinitered/sample-repo.git";;
     *) return 1;;
@@ -21,32 +25,33 @@ source ./src/scripts/parse_commit_info.sh
 
 @test "It fetches the last commit message" {
   run FetchCommitMessage
-  echo "Debug: Output = '$output'"  # Verbose log
+  >&2 echo "Debug: Output = '$output'"  # Verbose log
   [[ $output =~ Fix:\ Commit\ for\ testing\ \(#42\) ]]
 }
 
 @test "It fetches the commit hash" {
   run FetchCommitHash
-  echo "Debug: Output = '$output'"  # Verbose log
+  >&2 echo "Debug: Output = '$output'"  # Verbose log
   [[ $output =~ 1234567890abcdef ]]
 }
 
 @test "It fetches the repo URL" {
   run FetchRepoURL
-  echo "Debug: Output = '$output'"  # Verbose log
+  >&2 echo "Debug: Output = '$output'"  # Verbose log
   [[ $output =~ https://github.com/infinitered/sample-repo.git ]]
 }
 
 @test "It fetches the repo name" {
   run ParseRepoName
-  echo "Debug: Output = '$output'"  # Verbose log
+  >&2 echo "Debug: Output = '$output'"  # Verbose log
   [[ $output =~ sample-repo ]]
 }
 
 @test "It fetches PR number from commit message" {
+  # shellcheck disable=SC2030
   export COMMIT_MESSAGE=$COMMIT_MESSAGE_WITH_PR
   run ExtractPRNumber
-  echo "Debug: Output = '$output'"  # Verbose log
+  >&2 echo "Debug: Output = '$output'"  # Verbose log
   [[ $output =~ \42 ]]
 }
 
@@ -57,10 +62,9 @@ source ./src/scripts/parse_commit_info.sh
   export REPO_NAME="sample-repo"
   export COMMIT_MESSAGE="Fix: Commit for testing (#42)"
 
-  run ConstructCommitMessage
-  echo "Debug: Output = '$output'"  # Verbose log
-  [[ $output =~ https://github.com/infinitered/sample-repo/pull/42 ]]
-  [[ $output =~ orb:\ sample-repo\ --\ Fix:\ Commit\ for\ testing\ \(#42\)\ --\ https://github.com/infinitered/sample-repo/pull/42 ]]
+  run ConstructCommitMessage "$REPO_NAME" "$COMMIT_MESSAGE" "$PR_NUMBER" "$COMMIT_HASH"
+  >&2 echo "Debug: Output = '$output'"  # Verbose log
+  [[ $output == "orb(sample-repo): Fix: Commit for testing (#42) https://github.com/infinitered/sample-repo/pull/42" ]]
   unset PR_NUMBER
   unset REPO_NAME
   unset COMMIT_MESSAGE
@@ -69,15 +73,14 @@ source ./src/scripts/parse_commit_info.sh
 @test "It constructs commit link and commit message when PR number is absent" {
   # Unset PR number to simulate absence
   unset PR_NUMBER
-  # shellcheck disable=SC2031
   export REPO_NAME="sample-repo"
   export COMMIT_HASH="1234567890abcdef"
   export COMMIT_MESSAGE="Fix: Commit for testing"
 
-  run ConstructCommitMessage
-  echo "Debug: Output = '$output'"  # Verbose log
-  [[ $output =~ https://github.com/infinitered/sample-repo/commit/1234567890abcdef ]]
-  [[ $output =~ orb:\ sample-repo\ --\ Fix:\ Commit\ for\ testing\ --\ https://github.com/infinitered/sample-repo/commit/1234567890abcdef ]]
+  run ConstructCommitMessage "$REPO_NAME" "$COMMIT_MESSAGE" "$PR_NUMBER" "$COMMIT_HASH"
+  [[ $output =~ orb\(sample-repo\):\ Fix:\ Commit\ for\ testing\ https://github.com/infinitered/sample-repo/commit/$COMMIT_HASH ]]
+  >&2 echo "Debug: Output = '$output'"  # Verbose log
+
   unset REPO_NAME
   unset COMMIT_HASH
   unset COMMIT_MESSAGE
@@ -85,7 +88,17 @@ source ./src/scripts/parse_commit_info.sh
 
 @test "It parses and constructs the final commit message" {
   run ParseCommitInfo
-  echo "Debug: Output = '$output'"  # Verbose log
-  [[ $output == "orb: sample-repo -- Fix: Commit for testing (#42) -- https://github.com/infinitered/sample-repo/pull/42" ]]
+  final_msg=$(echo "$output" | grep "^Final constructed message:" | cut -d ':' -f 2- | xargs)
+  >&2 echo "Debug: Extracted Final Commit Message = '$final_msg'"
+  [[ $final_msg == "orb(sample-repo): Fix: Commit for testing (#42) https://github.com/infinitered/sample-repo/pull/42" ]]
 }
 
+
+teardown() {
+  unset COMMIT_MESSAGE_WITH_PR
+  unset PR_NUMBER
+  unset REPO_NAME
+  unset COMMIT_MESSAGE
+  unset COMMIT_HASH
+  unset final_msg
+}

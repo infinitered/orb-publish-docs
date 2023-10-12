@@ -117,7 +117,7 @@ source ./src/scripts/parse_commit_info.sh
 @test "ParseCommitInfo: It handles commit messages with URL-like strings" {
   export TEST_COMMIT_MESSAGE="Fix: See https://example.com/issues/42 for more info (#42)"
   run ParseCommitInfo
-  FINAL_MSG=$(echo "$output" | grep "^Final constructed message:" | cut -d ':' -f 2- | xargs)
+  FINAL_MSG=$(echo "$output" | xargs)
   echo "DEBUG    FINAL_MSG: \"$FINAL_MSG\""
   echo "EXPECTED FINAL_MSG: \"orb($REPO_NAME): $COMMIT_MESSAGE_WITHOUT_PR https://github.com/$ORG_NAME/$REPO_NAME/commit/$COMMIT_HASH\""
   [[ $FINAL_MSG == "orb($REPO_NAME): Fix: See https://example.com/issues/42 for more info (#42) https://github.com/org-name/repo-name/pull/42" ]]
@@ -134,7 +134,7 @@ source ./src/scripts/parse_commit_info.sh
 @test "ParseCommitInfo: It parses and constructs the final commit message with commit link" {
   export TEST_COMMIT_MESSAGE="$COMMIT_MESSAGE_WITHOUT_PR"
   run ParseCommitInfo
-  FINAL_MSG=$(echo "$output" | grep "^Final constructed message:" | cut -d ':' -f 2- | xargs)
+  FINAL_MSG=$(echo "$output" | xargs)
   echo "DEBUG    FINAL_MSG: \"$FINAL_MSG\""
   echo "EXPECTED FINAL_MSG: \"orb($REPO_NAME): $COMMIT_MESSAGE_WITHOUT_PR https://github.com/$ORG_NAME/$REPO_NAME/commit/$COMMIT_HASH\""
   [[ $FINAL_MSG == "orb($REPO_NAME): $COMMIT_MESSAGE_WITHOUT_PR https://github.com/$ORG_NAME/$REPO_NAME/commit/$COMMIT_HASH" ]]

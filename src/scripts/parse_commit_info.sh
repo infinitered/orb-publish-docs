@@ -28,9 +28,8 @@ GetNormalizedRepoURL() {
     # If it's already an HTTPS URL, just ensure it doesn't have the .git suffix
     echo "${circle_repo_url%.git}"
   else
-    # Convert SSH format to https format for consistency and strip .git
-    local https_url="${circle_repo_url/git@/https://}"
-    https_url="${https_url/:/\/}"  # Replace ':' with '/'
+    # Convert SSH format to https format for consistency
+    local https_url="${circle_repo_url/git@github.com:/https://github.com/}"
     echo "${https_url%.git}"      # Strip trailing .git if present
   fi
 }

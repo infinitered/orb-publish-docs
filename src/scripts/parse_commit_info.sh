@@ -93,32 +93,32 @@ ParseCommitInfo() {
   fi
 
   # Debug logs
-  >&2 echo "DEBUG: REPOSITORY_URL = $REPOSITORY_URL"
+  >&3 echo "DEBUG: REPOSITORY_URL = $REPOSITORY_URL"
 
   COMMIT_MESSAGE=$(FetchCommitMessage)
   COMMIT_HASH=$(FetchCommitHash)
 
   # Debug logs
-  >&2 echo "DEBUG: COMMIT_MESSAGE = $COMMIT_MESSAGE"
-  >&2 echo "DEBUG: COMMIT_HASH = $COMMIT_HASH"
+  >&3 echo "DEBUG: COMMIT_MESSAGE = $COMMIT_MESSAGE"
+  >&3 echo "DEBUG: COMMIT_HASH = $COMMIT_HASH"
 
   REPO_URL=$(GetNormalizedRepoURL "$REPOSITORY_URL")
 
   # Debug logs
-  >&2 echo "DEBUG: REPO_URL = $REPO_URL"
+  >&3 echo "DEBUG: REPO_URL = $REPO_URL"
 
   read -r ORG_NAME REPO_NAME <<< "$(ExtractGitHubOrgAndRepo "$REPO_URL")"
   PR_NUMBER=$(ExtractPRNumber "$COMMIT_MESSAGE")
 
   # Debug logs
-  >&2 echo "DEBUG: ORG_NAME = $ORG_NAME"
-  >&2 echo "DEBUG: REPO_NAME = $REPO_NAME"
-  >&2 echo "DEBUG: PR_NUMBER = $PR_NUMBER"
+  >&3 echo "DEBUG: ORG_NAME = $ORG_NAME"
+  >&3 echo "DEBUG: REPO_NAME = $REPO_NAME"
+  >&3 echo "DEBUG: PR_NUMBER = $PR_NUMBER"
 
   final_commit_message=$(ConstructCommitMessage "$ORG_NAME" "$REPO_NAME" "$COMMIT_MESSAGE" "$PR_NUMBER" "$COMMIT_HASH")
 
   # Debug log for the final constructed message
-  >&2 echo "DEBUG: final_commit_message = $final_commit_message"
+  >&3 echo "DEBUG: final_commit_message = $final_commit_message"
 
   echo "$final_commit_message"
 }

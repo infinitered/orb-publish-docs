@@ -126,7 +126,7 @@ source ./src/scripts/parse_commit_info.sh
   run ParseCommitInfo
   FINAL_MSG=$(echo "$output" | xargs)
   echo "DEBUG: FINAL_MSG \"$FINAL_MSG\""
-  [[ $FINAL_MSG == "orb($REPO_NAME): $COMMIT_MESSAGE_WITH_PR https://github.com/org-name/repo-name/pull/42" ]]
+  [[ $FINAL_MSG == "orb(repo-name): $COMMIT_MESSAGE_WITH_PR https://github.com/org-name/repo-name/pull/42" ]]
 }
 
 @test "ParseCommitInfo: It parses and constructs the final commit message with commit link" {
@@ -134,7 +134,7 @@ source ./src/scripts/parse_commit_info.sh
   run ParseCommitInfo
   FINAL_MSG=$(echo "$output" | grep "^Final constructed message:" | cut -d ':' -f 2- | xargs)
   echo "DEBUG: FINAL_MSG \"$FINAL_MSG\""
-  [[ $FINAL_MSG == "orb($REPO_NAME): $COMMIT_MESSAGE_WITHOUT_PR https://github.com/org-name/repo-name/commit/$COMMIT_HASH" ]]
+  [[ $FINAL_MSG == "orb(repo-name): $COMMIT_MESSAGE_WITHOUT_PR https://github.com/org-name/repo-name/commit/$COMMIT_HASH" ]]
 }
 
 

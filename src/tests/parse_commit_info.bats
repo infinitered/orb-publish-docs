@@ -102,15 +102,15 @@ source ./src/scripts/parse_commit_info.sh
 @test "FetchCommitMessage: It handles commit messages with special characters" {
   export TEST_COMMIT_MESSAGE="Fix & Improve: Commit for !testing (#42)"
   run FetchCommitMessage
+  echo "DEBUG: output \"$output\""
   [[ $output =~ Fix\ \&\ Improve:\ Commit\ for\ \!testing\ \(#42\) ]]
-  >&1 echo "DEBUG: output \"$output\""
 }
 
 @test "ExtractPRNumber: It takes the last possible PR number in messages with multiple potential PR numbers" {
   export TEST_COMMIT_MESSAGE="Fix: Commit for testing (#123) (#42)"
   run ExtractPRNumber
+  echo "DEBUG: output \"$output\""
   [[ $output =~ \42 ]]  # Assuming it extracts the last PR number by default
-  >&1 echo "DEBUG: output \"$output\""
 }
 
 @test "FetchCommitMessage: It handles very long commit messages" {

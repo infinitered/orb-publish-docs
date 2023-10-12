@@ -42,8 +42,6 @@ GetNormalizedRepoURL() {
 ExtractGitHubOrgAndRepo() {
   local repo_url="$1"
 
-  echo "DEBUG: repo_url \"$repo_url\"" >&2
-
   if [[ $repo_url != *github.com* ]]; then
     echo "Error: Not a GitHub URL." >&2
     exit 1
@@ -99,28 +97,11 @@ ParseCommitInfo() {
     REPO_URL=$(GetNormalizedRepoURL "$CIRCLE_REPOSITORY_URL")
   fi
 
-  # Debug logs
-  >&2 echo "DEBUG: REPOSITORY_URL = $REPOSITORY_URL"
-
   COMMIT_MESSAGE=$(FetchCommitMessage)
   COMMIT_HASH=$(FetchCommitHash)
 
-  # Debug logs
-  >&2 echo "DEBUG: COMMIT_MESSAGE = $COMMIT_MESSAGE"
-  >&2 echo "DEBUG: COMMIT_HASH = $COMMIT_HASH"
-
-
-
-  # Debug logs
-  >&2 echo "DEBUG: REPO_URL = $REPO_URL"
-
   read -r ORG_NAME REPO_NAME <<< "$(ExtractGitHubOrgAndRepo "$REPO_URL")"
   PR_NUMBER=$(ExtractPRNumber "$COMMIT_MESSAGE")
-
-#  # Debug logs
-  >&2 echo "DEBUG: ORG_NAME = $ORG_NAME"
-  >&2 echo "DEBUG: REPO_NAME = $REPO_NAME"
-  >&2 echo "DEBUG: PR_NUMBER = $PR_NUMBER"
 
   final_commit_message=$(ConstructCommitMessage "$ORG_NAME" "$REPO_NAME" "$COMMIT_MESSAGE" "$PR_NUMBER" "$COMMIT_HASH")
 
@@ -132,9 +113,6 @@ ORB_TEST_ENV="bats-core"
 if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
 
   cd "$SOURCE_REPO_DIRECTORY" || { echo "Changing directory failed"; exit 1; }
-
-  echo "DEBUG: Pre-ParseCommitInfo CIRCLE_REPOSITORY_URL = $CIRCLE_REPOSITORY_URL"
-  echo "DEBUG: Pre-ParseCommitInfo SOURCE_REPO_DIRECTORY = $SOURCE_REPO_DIRECTORY"
 
   final_commit_message="$(ParseCommitInfo)"
 

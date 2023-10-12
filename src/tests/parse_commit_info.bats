@@ -52,14 +52,12 @@ source ./src/scripts/parse_commit_info.sh
   export REPO_URL_MOCK="https://github.com/org-name/repo-name.git"
   run GetNormalizedRepoURL $REPO_URL_MOCK
   [[ $output == "https://github.com/org-name/repo-name" ]]
-  unset $REPO_URL_MOCK
 }
 
 @test "GetNormalizedRepoURL: It fetches and normalizes SSH repo URL" {
   export REPO_URL_MOCK="git@github.com:org-name/repo-name.git"
   run GetNormalizedRepoURL $REPO_URL_MOCK
   [[ $output == "https://github.com/org-name/repo-name" ]]
-  unset $REPO_URL_MOCK
 }
 
 @test "ExtractGitHubOrgAndRepo: It extracts org and repo from HTTPS URL with .git suffix" {
@@ -106,7 +104,7 @@ source ./src/scripts/parse_commit_info.sh
 }
 
 @test "ParseCommitInfo: It parses and constructs the final commit message with commit link" {
-  TEST_COMMIT_MESSAGE="$COMMIT_MESSAGE_WITHOUT_PR"
+  export TEST_COMMIT_MESSAGE="$COMMIT_MESSAGE_WITHOUT_PR"
   run ParseCommitInfo
   FINAL_MSG=$(echo "$output" | grep "^Final constructed message:" | cut -d ':' -f 2- | xargs)
   [[ $FINAL_MSG == "orb($REPO_NAME): $COMMIT_MESSAGE_WITHOUT_PR https://github.com/org-name/repo-name/commit/$COMMIT_HASH" ]]
@@ -114,35 +112,31 @@ source ./src/scripts/parse_commit_info.sh
 }
 
 @test "FetchCommitMessage: It handles commit messages with special characters" {
-  export COMMIT_MESSAGE_WITH_PR="Fix & Improve: Commit for !testing (#42)"
+  export TEST_COMMIT_MESSAGE="Fix & Improve: Commit for !testing (#42)"
   run FetchCommitMessage
   [[ $output =~ Fix\ \&\ Improve:\ Commit\ for\ \!testing\ \(#42\) ]]
   >&1 echo "DEBUG: output \"$output\""
-  unset COMMIT_MESSAGE_WITH_PR
 }
 
 @test "ExtractPRNumber: It takes the last possible PR number in messages with multiple potential PR numbers" {
-  export COMMIT_MESSAGE_WITH_PR="Fix: Commit for testing (#123) (#42)"
+  export TEST_COMMIT_MESSAGE="Fix: Commit for testing (#123) (#42)"
   run ExtractPRNumber
   [[ $output =~ \42 ]]  # Assuming it extracts the last PR number by default
   >&1 echo "DEBUG: output \"$output\""
-  unset COMMIT_MESSAGE_WITH_PR
 }
 
 @test "FetchCommitMessage: It handles very long commit messages" {
   long_msg="Fix: $(printf 'A%.0s' {1..500})"  # Generates a message "Fix: AAAAAAAAAA... (500 times)"
-  export COMMIT_MESSAGE_WITH_PR="$long_msg (#42)"
+  export TEST_COMMIT_MESSAGE="$long_msg (#42)"
   run FetchCommitMessage
   [[ ${#output} -eq 507 ]]  # Length should be 507 (500 + 7 for "Fix: " and "(#42)")
-  unset COMMIT_MESSAGE_WITH_PR
 }
 
 @test "ParseCommitInfo: It handles commit messages with URL-like strings" {
-  export COMMIT_MESSAGE_WITH_PR="Fix: See https://example.com/issues/42 for more info (#42)"
+  export TEST_COMMIT_MESSAGE="Fix: See https://example.com/issues/42 for more info (#42)"
   run ParseCommitInfo
   FINAL_MSG=$(echo "$output" | grep "^Final constructed message:" | cut -d ':' -f 2- | xargs)
   [[ $FINAL_MSG == "orb($REPO_NAME): Fix: See https://example.com/issues/42 for more info (#42) https://github.com/org-name/repo-name/pull/42" ]]
-  unset COMMIT_MESSAGE_WITH_PR
 }
 
 teardown() {
@@ -154,6 +148,6 @@ teardown() {
   unset ORG_NAME
   unset PR_NUMBER
   unset REPO_NAME
-  unset $TEST_REPO_URL
+  unset TEST_REPO_URL
   unset TEST_COMMIT_MESSAGE
 }

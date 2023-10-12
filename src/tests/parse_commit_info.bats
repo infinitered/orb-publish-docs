@@ -86,6 +86,13 @@ source ./src/scripts/parse_commit_info.sh
   [[ $output =~ \42 ]]
 }
 
+@test "ExtractPRNumber: It takes the last possible PR number in messages with multiple potential PR numbers" {
+  export TEST_COMMIT_MESSAGE="Fix: Commit for testing (#123) (#42)"
+  run ExtractPRNumber $TEST_COMMIT_MESSAGE
+  echo "DEBUG: output \"$output\""
+  [[ $output =~ \42 ]]  # Assuming it extracts the last PR number by default
+}
+
 @test "CreatePRLink: It constructs PR link" {
   export PR_NUMBER=42
   run CreatePRLink "$ORG_NAME" "$REPO_NAME" "$PR_NUMBER"
@@ -106,12 +113,7 @@ source ./src/scripts/parse_commit_info.sh
   [[ $output =~ Fix\ \&\ Improve:\ Commit\ for\ \!testing\ \(#42\) ]]
 }
 
-@test "ExtractPRNumber: It takes the last possible PR number in messages with multiple potential PR numbers" {
-  export TEST_COMMIT_MESSAGE="Fix: Commit for testing (#123) (#42)"
-  run ExtractPRNumber
-  echo "DEBUG: output \"$output\""
-  [[ $output =~ \42 ]]  # Assuming it extracts the last PR number by default
-}
+
 
 @test "FetchCommitMessage: It handles very long commit messages" {
   long_msg="Fix: $(printf 'A%.0s' {1..500})"  # Generates a message "Fix: AAAAAAAAAA... (500 times)"

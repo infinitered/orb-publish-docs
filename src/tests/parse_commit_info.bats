@@ -51,14 +51,14 @@ source ./src/scripts/parse_commit_info.sh
 @test "GetNormalizedRepoURL: It fetches and normalizes HTTPS repo URL" {
   export REPO_URL_MOCK="https://github.com/$ORG_NAME/$REPO_NAME.git"
   run GetNormalizedRepoURL $REPO_URL_MOCK
-  [[ $output == "https://github.com/$ORG_NAME/$REPO_NAME" ]]
+  [[ $output == "https://github.com/org-name/repo-name" ]]
   unset REPO_URL_MOCK
 }
 
 @test "GetNormalizedRepoURL: It fetches and normalizes SSH repo URL" {
   export REPO_URL_MOCK="git@github.com:$ORG_NAME/$REPO_NAME.git"
   run GetNormalizedRepoURL $REPO_URL_MOCK
-  [[ $output == "https://github.com/$ORG_NAME/$REPO_NAME" ]]
+  [[ $output == "https://github.com/org-name/repo-name" ]]
   unset REPO_URL_MOCK
 }
 

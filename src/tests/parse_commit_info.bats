@@ -119,6 +119,7 @@ source ./src/scripts/parse_commit_info.sh
   long_msg="Fix: $(printf 'A%.0s' {1..500})"  # Generates a message "Fix: AAAAAAAAAA... (500 times)"
   export TEST_COMMIT_MESSAGE="$long_msg (#42)"
   run FetchCommitMessage
+  echo "DEBUG: output \"$output\""
   [[ ${#output} -eq 507 ]]  # Length should be 507 (500 + 7 for "Fix: " and "(#42)")
 }
 

@@ -93,7 +93,7 @@ source ./src/scripts/parse_commit_info.sh
   run ParseCommitInfo
   FINAL_MSG=$(echo "$output" | xargs)
   [[ $FINAL_MSG == "orb($REPO_NAME): $COMMIT_MESSAGE_WITH_PR https://github.com/$ORG_NAME/$REPO_NAME/pull/42" ]]
-  echo "DEBUG: FINAL_MSG \"$FINAL_MSG\""
+  >&2 echo "DEBUG: FINAL_MSG \"$FINAL_MSG\""
 }
 
 @test "ParseCommitInfo: It parses and constructs the final commit message with commit link" {
@@ -101,14 +101,14 @@ source ./src/scripts/parse_commit_info.sh
   run ParseCommitInfo
   FINAL_MSG=$(echo "$output" | grep "^Final constructed message:" | cut -d ':' -f 2- | xargs)
   [[ $FINAL_MSG == "orb($REPO_NAME): $COMMIT_MESSAGE_WITHOUT_PR https://github.com/$ORG_NAME/$REPO_NAME/commit/1234567890abcdef" ]]
-  echo "DEBUG: FINAL_MSG \"$FINAL_MSG\""
+  >&2 echo "DEBUG: FINAL_MSG \"$FINAL_MSG\""
 }
 
 @test "FetchCommitMessage: It handles commit messages with special characters" {
   export COMMIT_MESSAGE_WITH_PR="Fix & Improve: Commit for !testing (#42)"
   run FetchCommitMessage
   [[ $output =~ Fix\ \&\ Improve:\ Commit\ for\ \!testing\ \(#42\) ]]
-  echo "DEBUG: output \"$output\""
+  >&2 echo "DEBUG: output \"$output\""
   unset COMMIT_MESSAGE_WITH_PR
 }
 
@@ -116,7 +116,7 @@ source ./src/scripts/parse_commit_info.sh
   export COMMIT_MESSAGE_WITH_PR="Fix: Commit for testing (#123) (#42)"
   run ExtractPRNumber
   [[ $output =~ \42 ]]  # Assuming it extracts the last PR number by default
-  echo "DEBUG: output \"$output\""
+  >&2 echo "DEBUG: output \"$output\""
   unset COMMIT_MESSAGE_WITH_PR
 }
 

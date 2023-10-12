@@ -98,20 +98,6 @@ source ./src/scripts/parse_commit_info.sh
   [[ $output == "https://github.com/org-name/repo-name/commit/$COMMIT_HASH" ]]
 }
 
-@test "ParseCommitInfo: It parses and constructs the final commit message with PR link" {
-  run ParseCommitInfo
-  FINAL_MSG=$(echo "$output" | xargs)
-  echo "DEBUG: FINAL_MSG \"$FINAL_MSG\""
-  [[ $FINAL_MSG == "orb($REPO_NAME): $COMMIT_MESSAGE_WITH_PR https://github.com/org-name/repo-name/pull/42" ]]
-}
-
-@test "ParseCommitInfo: It parses and constructs the final commit message with commit link" {
-  export TEST_COMMIT_MESSAGE="$COMMIT_MESSAGE_WITHOUT_PR"
-  run ParseCommitInfo
-  FINAL_MSG=$(echo "$output" | grep "^Final constructed message:" | cut -d ':' -f 2- | xargs)
-  echo "DEBUG: FINAL_MSG \"$FINAL_MSG\""
-  [[ $FINAL_MSG == "orb($REPO_NAME): $COMMIT_MESSAGE_WITHOUT_PR https://github.com/org-name/repo-name/commit/$COMMIT_HASH" ]]
-}
 
 @test "FetchCommitMessage: It handles commit messages with special characters" {
   export TEST_COMMIT_MESSAGE="Fix & Improve: Commit for !testing (#42)"
@@ -140,6 +126,22 @@ source ./src/scripts/parse_commit_info.sh
   FINAL_MSG=$(echo "$output" | grep "^Final constructed message:" | cut -d ':' -f 2- | xargs)
   [[ $FINAL_MSG == "orb($REPO_NAME): Fix: See https://example.com/issues/42 for more info (#42) https://github.com/org-name/repo-name/pull/42" ]]
 }
+
+@test "ParseCommitInfo: It parses and constructs the final commit message with PR link" {
+  run ParseCommitInfo
+  FINAL_MSG=$(echo "$output" | xargs)
+  echo "DEBUG: FINAL_MSG \"$FINAL_MSG\""
+  [[ $FINAL_MSG == "orb($REPO_NAME): $COMMIT_MESSAGE_WITH_PR https://github.com/org-name/repo-name/pull/42" ]]
+}
+
+@test "ParseCommitInfo: It parses and constructs the final commit message with commit link" {
+  export TEST_COMMIT_MESSAGE="$COMMIT_MESSAGE_WITHOUT_PR"
+  run ParseCommitInfo
+  FINAL_MSG=$(echo "$output" | grep "^Final constructed message:" | cut -d ':' -f 2- | xargs)
+  echo "DEBUG: FINAL_MSG \"$FINAL_MSG\""
+  [[ $FINAL_MSG == "orb($REPO_NAME): $COMMIT_MESSAGE_WITHOUT_PR https://github.com/org-name/repo-name/commit/$COMMIT_HASH" ]]
+}
+
 
 teardown() {
   unset COMMIT_HASH

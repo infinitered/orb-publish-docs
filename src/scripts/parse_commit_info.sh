@@ -1,12 +1,15 @@
 #! /bin/bash
 
+set -e
+
+
 # Global variable declarations
-COMMIT_MESSAGE=""
-COMMIT_HASH=""
-REPO_URL=""
-REPO_NAME=""
-PR_NUMBER=""
-final_commit_message=""
+declare -g PARSE_COMMIT_COMMIT_MESSAGE=""
+declare -g PARSE_COMMIT_COMMIT_HASH=""
+declare -g PARSE_COMMIT_REPO_URL=""
+declare -g PARSE_COMMIT_REPO_NAME=""
+declare -g PARSE_COMMIT_PR_NUMBER=""
+declare -g final_commit_message=""
 
 ExtractPRNumber() {
   local commit_msg="$1"
@@ -24,6 +27,8 @@ FetchCommitHash() {
 # Normalize the repository URL for consistent usage
 GetNormalizedRepoURL() {
   local circle_repo_url="$1"
+
+
   if [[ $circle_repo_url == https://* ]]; then
     # If it's already an HTTPS URL, just ensure it doesn't have the .git suffix
     echo "${circle_repo_url%.git}"
@@ -36,6 +41,7 @@ GetNormalizedRepoURL() {
 
 ExtractGitHubOrgAndRepo() {
   local repo_url="$1"
+
   if [[ $repo_url != *github.com* ]]; then
     echo "Error: Not a GitHub URL." >&2
     exit 1
@@ -86,36 +92,18 @@ CreateCommitLink() {
 
 ParseCommitInfo() {
   if [ "$ORB_TEST_ENV" = "bats-core" ]; then
-    REPOSITORY_URL="$TEST_REPO_URL"
+    PARSE_COMMIT_REPO_URL=$(GetNormalizedRepoURL "$TEST_REPO_URL")
   else
-    cd "$SOURCE_REPO_DIRECTORY" || { echo "Changing directory failed"; exit 1; }
-    REPOSITORY_URL="$CIRCLE_REPOSITORY_URL"
+    PARSE_COMMIT_REPO_URL=$(GetNormalizedRepoURL "$CIRCLE_REPOSITORY_URL")
   fi
 
-  # Debug logs
-#  >&2 echo "DEBUG: REPOSITORY_URL = $REPOSITORY_URL"
+  PARSE_COMMIT_COMMIT_MESSAGE=$(FetchCommitMessage)
+  PARSE_COMMIT_COMMIT_HASH=$(FetchCommitHash)
 
-  COMMIT_MESSAGE=$(FetchCommitMessage)
-  COMMIT_HASH=$(FetchCommitHash)
+  read -r ORG_NAME PARSE_COMMIT_REPO_NAME <<< "$(ExtractGitHubOrgAndRepo "$PARSE_COMMIT_REPO_URL")"
+  PARSE_COMMIT_PR_NUMBER=$(ExtractPRNumber "$PARSE_COMMIT_COMMIT_MESSAGE")
 
-  # Debug logs
-#  >&2 echo "DEBUG: COMMIT_MESSAGE = $COMMIT_MESSAGE"
-#  >&2 echo "DEBUG: COMMIT_HASH = $COMMIT_HASH"
-
-  REPO_URL=$(GetNormalizedRepoURL "$REPOSITORY_URL")
-
-  # Debug logs
-#  >&2 echo "DEBUG: REPO_URL = $REPO_URL"
-
-  read -r ORG_NAME REPO_NAME <<< "$(ExtractGitHubOrgAndRepo "$REPO_URL")"
-  PR_NUMBER=$(ExtractPRNumber "$COMMIT_MESSAGE")
-
-#  # Debug logs
-#  >&2 echo "DEBUG: ORG_NAME = $ORG_NAME"
-#  >&2 echo "DEBUG: REPO_NAME = $REPO_NAME"
-#  >&2 echo "DEBUG: PR_NUMBER = $PR_NUMBER"
-
-  final_commit_message=$(ConstructCommitMessage "$ORG_NAME" "$REPO_NAME" "$COMMIT_MESSAGE" "$PR_NUMBER" "$COMMIT_HASH")
+  final_commit_message=$(ConstructCommitMessage "$ORG_NAME" "$PARSE_COMMIT_REPO_NAME" "$PARSE_COMMIT_COMMIT_MESSAGE" "$PARSE_COMMIT_PR_NUMBER" "$PARSE_COMMIT_COMMIT_HASH")
 
   echo "$final_commit_message"
 }
@@ -123,16 +111,21 @@ ParseCommitInfo() {
 
 ORB_TEST_ENV="bats-core"
 if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
+
+  cd "$SOURCE_REPO_DIRECTORY" || { echo "Changing directory failed"; exit 1; }
+
   final_commit_message="$(ParseCommitInfo)"
 
   # Logging statements to inspect variables
-  echo "COMMIT_MESSAGE: $COMMIT_MESSAGE"
-  echo "COMMIT_HASH: $COMMIT_HASH"
-  echo "REPO_URL: $REPO_URL"
-  echo "REPO_NAME: $REPO_NAME"
-  echo "PR_NUMBER: $PR_NUMBER"
+  echo "CIRCLE_REPOSITORY_URL: $CIRCLE_REPOSITORY_URL"
+  echo "SOURCE_REPO_DIRECTORY: $SOURCE_REPO_DIRECTORY"
+  echo "PARSE_COMMIT_COMMIT_MESSAGE: $PARSE_COMMIT_COMMIT_MESSAGE"
+  echo "PARSE_COMMIT_COMMIT_HASH: $PARSE_COMMIT_COMMIT_HASH"
+  echo "PARSE_COMMIT_REPO_URL: $PARSE_COMMIT_REPO_URL"
+  echo "PARSE_COMMIT_REPO_NAME: $PARSE_COMMIT_REPO_NAME"
+  echo "PARSE_COMMIT_PR_NUMBER: $PARSE_COMMIT_PR_NUMBER"
   echo "final_commit_message: $final_commit_message"
 
-  export FINAL_COMMIT_MESSAGE=$final_commit_message
-  echo "export FINAL_COMMIT_MESSAGE='$final_commit_message'" >> "$BASH_ENV"
+  export FINAL_PARSE_COMMIT_COMMIT_MESSAGE=$final_commit_message
+  echo "export FINAL_PARSE_COMMIT_COMMIT_MESSAGE='$final_commit_message'" >> "$BASH_ENV"
 fi

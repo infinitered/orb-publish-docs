@@ -115,13 +115,16 @@ source ./src/scripts/parse_commit_info.sh
 
 
 @test "ParseCommitInfo: It handles commit messages with URL-like strings" {
+  echo "DEBUG: REPO_NAME Before - \"$REPO_NAME\"" >&2  # New Debug Line, directed to stderr
   export TEST_COMMIT_MESSAGE="Fix: See https://example.com/issues/42 for more info (#42)"
   run ParseCommitInfo
   FINAL_MSG=$(echo "$output" | xargs)
-  echo "DEBUG    FINAL_MSG: \"$FINAL_MSG\""
-  echo "EXPECTED FINAL_MSG: \"orb($REPO_NAME): $COMMIT_MESSAGE_WITHOUT_PR https://github.com/$ORG_NAME/$REPO_NAME/commit/$COMMIT_HASH\""
+  echo "DEBUG: REPO_NAME After - \"$REPO_NAME\"" >&2  # New Debug Line, directed to stderr
+  echo "DEBUG    FINAL_MSG: \"$FINAL_MSG\"" >&2
+  echo "EXPECTED FINAL_MSG: \"orb($REPO_NAME): $COMMIT_MESSAGE_WITHOUT_PR https://github.com/$ORG_NAME/$REPO_NAME/commit/$COMMIT_HASH\"" >&2
   [[ $FINAL_MSG == "orb($REPO_NAME): Fix: See https://example.com/issues/42 for more info (#42) https://github.com/org-name/repo-name/pull/42" ]]
 }
+
 
 @test "ParseCommitInfo: It parses and constructs the final commit message with PR link" {
   run ParseCommitInfo

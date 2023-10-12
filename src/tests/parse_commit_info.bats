@@ -88,7 +88,7 @@ source ./src/scripts/parse_commit_info.sh
 
 @test "ExtractPRNumber: It takes the last possible PR number in messages with multiple potential PR numbers" {
   export TEST_COMMIT_MESSAGE="Fix: Commit for testing (#123) (#42)"
-  run ExtractPRNumber $TEST_COMMIT_MESSAGE
+  run ExtractPRNumber "$TEST_COMMIT_MESSAGE"
   echo "DEBUG: output \"$output\""
   [[ $output =~ \42 ]]  # Assuming it extracts the last PR number by default
 }

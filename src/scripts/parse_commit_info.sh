@@ -4,17 +4,12 @@ set -e
 
 
 # Global variable declarations
-declare -g COMMIT_MESSAGE=""
-declare -g COMMIT_HASH=""
-declare -g REPO_URL=""
-declare -g REPO_NAME=""
-declare -g PR_NUMBER=""
+declare -g PARSE_COMMIT_COMMIT_MESSAGE=""
+declare -g PARSE_COMMIT_COMMIT_HASH=""
+declare -g PARSE_COMMIT_REPO_URL=""
+declare -g PARSE_COMMIT_REPO_NAME=""
+declare -g PARSE_COMMIT_PR_NUMBER=""
 declare -g final_commit_message=""
-
-ExtractPRNumber() {
-  local commit_msg="$1"
-  echo "$commit_msg" | grep -o "#[0-9]\+" | grep -o "[0-9]\+" | tail -n 1 || true
-}
 
 ExtractPRNumber() {
   local commit_msg="$1"
@@ -97,18 +92,18 @@ CreateCommitLink() {
 
 ParseCommitInfo() {
   if [ "$ORB_TEST_ENV" = "bats-core" ]; then
-    REPO_URL=$(GetNormalizedRepoURL "$CIRCLE_REPOSITORY_URL")
+    PARSE_COMMIT_REPO_URL=$(GetNormalizedRepoURL "$TEST_REPO_URL")
   else
-    REPO_URL=$(GetNormalizedRepoURL "$CIRCLE_REPOSITORY_URL")
+    PARSE_COMMIT_REPO_URL=$(GetNormalizedRepoURL "$CIRCLE_REPOSITORY_URL")
   fi
 
-  COMMIT_MESSAGE=$(FetchCommitMessage)
-  COMMIT_HASH=$(FetchCommitHash)
+  PARSE_COMMIT_COMMIT_MESSAGE=$(FetchCommitMessage)
+  PARSE_COMMIT_COMMIT_HASH=$(FetchCommitHash)
 
-  read -r ORG_NAME REPO_NAME <<< "$(ExtractGitHubOrgAndRepo "$REPO_URL")"
-  PR_NUMBER=$(ExtractPRNumber "$COMMIT_MESSAGE")
+  read -r ORG_NAME PARSE_COMMIT_REPO_NAME <<< "$(ExtractGitHubOrgAndRepo "$PARSE_COMMIT_REPO_URL")"
+  PARSE_COMMIT_PR_NUMBER=$(ExtractPRNumber "$PARSE_COMMIT_COMMIT_MESSAGE")
 
-  final_commit_message=$(ConstructCommitMessage "$ORG_NAME" "$REPO_NAME" "$COMMIT_MESSAGE" "$PR_NUMBER" "$COMMIT_HASH")
+  final_commit_message=$(ConstructCommitMessage "$ORG_NAME" "$PARSE_COMMIT_REPO_NAME" "$PARSE_COMMIT_COMMIT_MESSAGE" "$PARSE_COMMIT_PR_NUMBER" "$PARSE_COMMIT_COMMIT_HASH")
 
   echo "$final_commit_message"
 }
@@ -124,13 +119,13 @@ if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
   # Logging statements to inspect variables
   echo "CIRCLE_REPOSITORY_URL: $CIRCLE_REPOSITORY_URL"
   echo "SOURCE_REPO_DIRECTORY: $SOURCE_REPO_DIRECTORY"
-  echo "COMMIT_MESSAGE: $COMMIT_MESSAGE"
-  echo "COMMIT_HASH: $COMMIT_HASH"
-  echo "REPO_URL: $REPO_URL"
-  echo "REPO_NAME: $REPO_NAME"
-  echo "PR_NUMBER: $PR_NUMBER"
+  echo "PARSE_COMMIT_COMMIT_MESSAGE: $PARSE_COMMIT_COMMIT_MESSAGE"
+  echo "PARSE_COMMIT_COMMIT_HASH: $PARSE_COMMIT_COMMIT_HASH"
+  echo "PARSE_COMMIT_REPO_URL: $PARSE_COMMIT_REPO_URL"
+  echo "PARSE_COMMIT_REPO_NAME: $PARSE_COMMIT_REPO_NAME"
+  echo "PARSE_COMMIT_PR_NUMBER: $PARSE_COMMIT_PR_NUMBER"
   echo "final_commit_message: $final_commit_message"
 
-  export FINAL_COMMIT_MESSAGE=$final_commit_message
-  echo "export FINAL_COMMIT_MESSAGE='$final_commit_message'" >> "$BASH_ENV"
+  export FINAL_PARSE_COMMIT_COMMIT_MESSAGE=$final_commit_message
+  echo "export FINAL_PARSE_COMMIT_COMMIT_MESSAGE='$final_commit_message'" >> "$BASH_ENV"
 fi

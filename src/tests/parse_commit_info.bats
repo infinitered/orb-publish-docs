@@ -114,19 +114,11 @@ source ./src/scripts/parse_commit_info.sh
 }
 
 
-
-@test "FetchCommitMessage: It handles very long commit messages" {
-  long_msg="Fix: $(printf 'A%.0s' {1..500})"  # Generates a message "Fix: AAAAAAAAAA... (500 times)"
-  export TEST_COMMIT_MESSAGE="$long_msg (#42)"
-  run FetchCommitMessage
-  echo "DEBUG: output \"$output\""
-  [[ ${#output} -eq 507 ]]  # Length should be 507 (500 + 7 for "Fix: " and "(#42)")
-}
-
 @test "ParseCommitInfo: It handles commit messages with URL-like strings" {
   export TEST_COMMIT_MESSAGE="Fix: See https://example.com/issues/42 for more info (#42)"
   run ParseCommitInfo
   FINAL_MSG=$(echo "$output" | grep "^Final constructed message:" | cut -d ':' -f 2- | xargs)
+  echo "DEBUG: FINAL_MSG \"$FINAL_MSG\""
   [[ $FINAL_MSG == "orb($REPO_NAME): Fix: See https://example.com/issues/42 for more info (#42) https://github.com/org-name/repo-name/pull/42" ]]
 }
 

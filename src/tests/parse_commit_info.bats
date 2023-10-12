@@ -8,7 +8,7 @@ setup() {
   export COMMIT_MESSAGE_WITH_PR="Test: Commit message with PR (#42)"
   export ORG_NAME="org-name"
   export REPO_NAME="repo-name"
-  export CIRCLE_REPOSITORY_URL="https://github.com/$ORG_NAME/$REPO_NAME.git"
+  export TEST_REPO_URL="https://github.com/$ORG_NAME/$REPO_NAME.git"
   export TEST_COMMIT_MESSAGE="$COMMIT_MESSAGE_WITH_PR"
 }
 
@@ -145,6 +145,6 @@ teardown() {
   unset ORG_NAME
   unset PR_NUMBER
   unset REPO_NAME
-  unset CIRCLE_REPOSITORY_URL
+  unset $TEST_REPO_URL
   unset TEST_COMMIT_MESSAGE
 }

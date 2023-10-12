@@ -87,7 +87,14 @@ ParseCommitInfo() {
 
   COMMIT_MESSAGE=$(FetchCommitMessage)
   COMMIT_HASH=$(FetchCommitHash)
-  REPO_URL=$(GetNormalizedRepoURL "$CIRCLE_REPOSITORY_URL")
+
+  if [ "$ORB_TEST_ENV" = "bats-core" ]; then
+    REPOSITORY_URL="$TEST_REPO_URL"
+  else
+    REPOSITORY_URL="$CIRCLE_REPOSITORY_URL"
+  fi
+
+  REPO_URL=$(GetNormalizedRepoURL "$REPOSITORY_URL")
 
   read -r ORG_NAME REPO_NAME <<< "$(ExtractGitHubOrgAndRepo "$REPO_URL")"
   PR_NUMBER=$(ExtractPRNumber "$COMMIT_MESSAGE")

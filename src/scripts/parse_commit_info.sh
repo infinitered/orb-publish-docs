@@ -8,6 +8,11 @@ REPO_NAME=""
 PR_NUMBER=""
 final_commit_message=""
 
+ExtractPRNumber() {
+  local commit_msg="$1"
+  echo "$commit_msg" | grep -o "#[0-9]\+" | grep -o "[0-9]\+" || true
+}
+
 FetchCommitMessage() {
   git log -1 --pretty=%B || { echo "Fetching commit message failed"; exit 1; }
 }
@@ -16,31 +21,65 @@ FetchCommitHash() {
   git rev-parse HEAD || { echo "Fetching commit hash failed"; exit 1; }
 }
 
-FetchRepoURL() {
-  git config --get remote.origin.url || { echo "Fetching repo URL failed"; exit 1; }
+# Normalize the repository URL for consistent usage
+GetNormalizedRepoURL() {
+  local circle_repo_url="$1"
+  if [[ $circle_repo_url == https://* && ! $circle_repo_url == *.git ]]; then
+    echo "$circle_repo_url.git"
+  else
+    # Convert SSH format to https format for consistency
+    echo "$circle_repo_url" | sed 's,git@,https://,' | sed 's,:,/,'
+  fi
 }
 
-ParseRepoName() {
-  basename -s .git "$REPO_URL" || { echo "Parsing repo name failed"; exit 1; }
-}
+ExtractGitHubOrgAndRepo() {
+  local repo_url="$1"
+  if [[ $repo_url != *github.com* ]]; then
+    echo "Error: Not a GitHub URL." >&2
+    exit 1
+  fi
 
-ExtractPRNumber() {
-  echo "$COMMIT_MESSAGE" | grep -o "#[0-9]\+" | grep -o "[0-9]\+" || true
+  local extracted
+  extracted=$(echo "$repo_url" | awk -F'/' '{gsub(".git", "", $NF); print $(NF-1), $NF}')
+
+  if [ -z "$extracted" ]; then
+    echo "Error: Invalid GitHub URL format." >&2
+    exit 1
+  fi
+
+  echo "$extracted"
 }
 
 ConstructCommitMessage() {
-  local REPO_NAME="$1"
-  local COMMIT_MESSAGE="$2"
-  local PR_NUMBER="$3"
-  local COMMIT_HASH="$4"
+  local org="$1"
+  local repo="$2"
+  local commit_msg="$3"
+  local pr_num="$4"
+  local commit_hash="$5"
 
-  if [ -n "$PR_NUMBER" ]; then
-    PR_LINK="https://github.com/infinitered/$REPO_NAME/pull/$PR_NUMBER"
-    echo "orb($REPO_NAME): $COMMIT_MESSAGE $PR_LINK"
+  local link
+  if [ -n "$pr_num" ]; then
+    link=$(CreatePRLink "$org" "$repo" "$pr_num")
   else
-    COMMIT_LINK="https://github.com/infinitered/$REPO_NAME/commit/$COMMIT_HASH"
-    echo "orb($REPO_NAME): $COMMIT_MESSAGE $COMMIT_LINK"
+    link=$(CreateCommitLink "$org" "$repo" "$commit_hash")
   fi
+  echo "orb($repo): $commit_msg $link"
+}
+
+# Create PR Link
+CreatePRLink() {
+  local org="$1"
+  local repo="$2"
+  local pr_number="$3"
+  echo "https://github.com/$org/$repo/pull/$pr_number"
+}
+
+# Create Commit Link
+CreateCommitLink() {
+  local org="$1"
+  local repo="$2"
+  local commit_hash="$3"
+  echo "https://github.com/$org/$repo/commit/$commit_hash"
 }
 
 ParseCommitInfo() {
@@ -48,10 +87,12 @@ ParseCommitInfo() {
 
   COMMIT_MESSAGE=$(FetchCommitMessage)
   COMMIT_HASH=$(FetchCommitHash)
-  REPO_URL=$(FetchRepoURL)
-  REPO_NAME=$(ParseRepoName)
-  PR_NUMBER=$(ExtractPRNumber)
-  final_commit_message=$(ConstructCommitMessage "$REPO_NAME" "$COMMIT_MESSAGE" "$PR_NUMBER" "$COMMIT_HASH")
+  REPO_URL=$(GetNormalizedRepoURL "$CIRCLE_REPOSITORY_URL")
+
+  read -r ORG_NAME REPO_NAME <<< "$(ExtractGitHubOrgAndRepo "$REPO_URL")"
+  PR_NUMBER=$(ExtractPRNumber "$COMMIT_MESSAGE")
+
+  final_commit_message=$(ConstructCommitMessage "$ORG_NAME" "$REPO_NAME" "$COMMIT_MESSAGE" "$PR_NUMBER" "$COMMIT_HASH")
   echo "$final_commit_message"
 }
 

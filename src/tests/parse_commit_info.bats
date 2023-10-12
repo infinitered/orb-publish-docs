@@ -3,103 +3,153 @@
 # shellcheck disable=SC2030
 
 setup() {
-  export COMMIT_MESSAGE_WITH_PR="Fix: Commit for testing (#42)"
+  export COMMIT_HASH="commitHash1234567890"
+  export COMMIT_MESSAGE_WITHOUT_PR="Test: Commit message without PR"
+  export COMMIT_MESSAGE_WITH_PR="Test: Commit message with PR (#42)"
+  export ORG_NAME="org-name"
+  export REPO_NAME="repo-name"
+  export CIRCLE_REPOSITORY_URL="https://github.com/$ORG_NAME/$REPO_NAME.git"
+  export TEST_COMMIT_MESSAGE="$COMMIT_MESSAGE_WITH_PR"
 }
 
 # Mocking git commands and basename
 git() {
   case "$1" in
-    log) echo "$COMMIT_MESSAGE_WITH_PR";;
+    log) echo "$TEST_COMMIT_MESSAGE";;
     rev-parse) echo "1234567890abcdef";;
-    config) echo "https://github.com/infinitered/sample-repo.git";;
+    config) echo "$REPO_URL_MOCK";;
     *) return 1;;
   esac
 }
 
 basename() {
-  echo "sample-repo"
+  echo "$REPO_NAME"
 }
 
 # Source the script to get ParseCommitInfo function
 source ./src/scripts/parse_commit_info.sh
 
-@test "It fetches the last commit message" {
+@test "FetchCommitMessage: It fetches the last commit message" {
   run FetchCommitMessage
-  >&2 echo "Debug: Output = '$output'"  # Verbose log
-  [[ $output =~ Fix:\ Commit\ for\ testing\ \(#42\) ]]
+  echo "DEBUG: Output from FetchCommitMessage = $output"
+  [[ "$output" =~ Test:\ Commit\ message\ with\ PR\ \(#42\) ]]
 }
 
-@test "It fetches the commit hash" {
+@test "FetchCommitHash: It fetches the commit hash" {
   run FetchCommitHash
-  >&2 echo "Debug: Output = '$output'"  # Verbose log
   [[ $output =~ 1234567890abcdef ]]
 }
 
-@test "It fetches the repo URL" {
-  run FetchRepoURL
-  >&2 echo "Debug: Output = '$output'"  # Verbose log
-  [[ $output =~ https://github.com/infinitered/sample-repo.git ]]
+@test "GetNormalizedRepoURL: It fetches and normalizes HTTPS repo URL" {
+  export REPO_URL_MOCK="https://github.com/$ORG_NAME/$REPO_NAME.git"
+  run GetNormalizedRepoURL
+  [[ $output =~ https://github.com/$ORG_NAME/$REPO_NAME ]]
+  unset REPO_URL_MOCK
 }
 
-@test "It fetches the repo name" {
-  run ParseRepoName
-  >&2 echo "Debug: Output = '$output'"  # Verbose log
-  [[ $output =~ sample-repo ]]
+@test "GetNormalizedRepoURL: It fetches and normalizes SSH repo URL" {
+  export REPO_URL_MOCK="git@github.com:$ORG_NAME/$REPO_NAME.git"
+  run GetNormalizedRepoURL
+  [[ $output =~ https://github.com/$ORG_NAME/$REPO_NAME ]]
+  unset REPO_URL_MOCK
 }
 
-@test "It fetches PR number from commit message" {
-  # shellcheck disable=SC2030
-  export COMMIT_MESSAGE=$COMMIT_MESSAGE_WITH_PR
-  run ExtractPRNumber
-  >&2 echo "Debug: Output = '$output'"  # Verbose log
+@test "ExtractGitHubOrgAndRepo: It extracts org and repo from HTTPS URL with .git suffix" {
+  run ExtractGitHubOrgAndRepo "https://github.com/sample-org/sample-repo.git"
+  echo "DEBUG: Output from ExtractGitHubOrgAndRepo = $output"
+  [ "$status" -eq 0 ]
+  [ "$output" = "sample-org sample-repo" ]
+}
+
+@test "ExtractGitHubOrgAndRepo: It extracts org and repo from HTTPS URL without .git suffix" {
+  run ExtractGitHubOrgAndRepo "https://github.com/sample-org/sample-repo"
+  echo "DEBUG: Output from ExtractGitHubOrgAndRepo = $output"
+  [ "$status" -eq 0 ]
+  [ "$output" = "sample-org sample-repo" ]
+}
+
+@test "ExtractGitHubOrgAndRepo: It throws an error when given an invalid GitHub URL" {
+  run ExtractGitHubOrgAndRepo "https://invalid.com/sample-org/sample-repo.git"
+  echo "DEBUG: Output from ExtractGitHubOrgAndRepo = $output"
+  [ "$status" -eq 1 ]
+  [[ "$output" == "Error: Not a GitHub URL."* ]]
+}
+
+
+@test "ExtractPRNumber: It fetches PR number from commit message" {
+  run ExtractPRNumber "$COMMIT_MESSAGE_WITH_PR"
+  echo "DEBUG: Output from ExtractPRNumber = $output"
   [[ $output =~ \42 ]]
 }
 
-@test "It constructs PR link and commit message when PR number is present" {
-  # Set up PR number
+@test "CreatePRLink: It constructs PR link" {
   export PR_NUMBER=42
-  # shellcheck disable=SC2030
-  export REPO_NAME="sample-repo"
-  export COMMIT_MESSAGE="Fix: Commit for testing (#42)"
-
-  run ConstructCommitMessage "$REPO_NAME" "$COMMIT_MESSAGE" "$PR_NUMBER" "$COMMIT_HASH"
-  >&2 echo "Debug: Output = '$output'"  # Verbose log
-  [[ $output == "orb(sample-repo): Fix: Commit for testing (#42) https://github.com/infinitered/sample-repo/pull/42" ]]
+  run CreatePRLink "$ORG_NAME" "$REPO_NAME" "$PR_NUMBER"
+  echo "DEBUG: Output from CreateCommitLink = $output"
+  [[ $output == https://github.com/$ORG_NAME/$REPO_NAME/pull/42 ]]
   unset PR_NUMBER
-  unset REPO_NAME
-  unset COMMIT_MESSAGE
 }
 
-@test "It constructs commit link and commit message when PR number is absent" {
-  # Unset PR number to simulate absence
-  unset PR_NUMBER
-  export REPO_NAME="sample-repo"
-  export COMMIT_HASH="1234567890abcdef"
-  export COMMIT_MESSAGE="Fix: Commit for testing"
-
-  run ConstructCommitMessage "$REPO_NAME" "$COMMIT_MESSAGE" "$PR_NUMBER" "$COMMIT_HASH"
-  [[ $output =~ orb\(sample-repo\):\ Fix:\ Commit\ for\ testing\ https://github.com/infinitered/sample-repo/commit/$COMMIT_HASH ]]
-
-  >&2 echo "Debug: Output = '$output'"  # Verbose log
-
-  unset REPO_NAME
-  unset COMMIT_HASH
-  unset COMMIT_MESSAGE
+@test "CreateCommitLink: It constructs commit link" {
+  run CreateCommitLink "$ORG_NAME" "$REPO_NAME" "1234567890abcdef"
+  echo "DEBUG: Output from CreateCommitLink = $output"
+  [[ $output == "https://github.com/$ORG_NAME/$REPO_NAME/commit/1234567890abcdef" ]]
 }
 
-@test "It parses and constructs the final commit message" {
+@test "ParseCommitInfo: It parses and constructs the final commit message with PR link" {
   run ParseCommitInfo
-  final_msg=$(echo "$output" | grep "^Final constructed message:" | cut -d ':' -f 2- | xargs)
-  >&2 echo "Debug: Extracted Final Commit Message = '$final_msg'"
-  [[ $final_msg == "orb(sample-repo): Fix: Commit for testing (#42) https://github.com/infinitered/sample-repo/pull/42" ]]
+  echo "DEBUG: Output from ParseCommitInfo = $output"
+  FINAL_MSG=$(echo "$output" | xargs)
+  echo "DEBUG: Extracted Final Commit Message = $FINAL_MSG"
+  [[ $FINAL_MSG == "orb($REPO_NAME): $COMMIT_MESSAGE_WITH_PR https://github.com/$ORG_NAME/$REPO_NAME/pull/42" ]]
 }
 
+@test "ParseCommitInfo: It parses and constructs the final commit message with commit link" {
+  TEST_COMMIT_MESSAGE="$COMMIT_MESSAGE_WITHOUT_PR"
+  run ParseCommitInfo
+  FINAL_MSG=$(echo "$output" | grep "^Final constructed message:" | cut -d ':' -f 2- | xargs)
+  [[ $FINAL_MSG == "orb($REPO_NAME): $COMMIT_MESSAGE_WITHOUT_PR https://github.com/$ORG_NAME/$REPO_NAME/commit/1234567890abcdef" ]]
+}
+
+@test "FetchCommitMessage: It handles commit messages with special characters" {
+  export COMMIT_MESSAGE_WITH_PR="Fix & Improve: Commit for !testing (#42)"
+  run FetchCommitMessage
+  [[ $output =~ Fix\ \&\ Improve:\ Commit\ for\ \!testing\ \(#42\) ]]
+  unset COMMIT_MESSAGE_WITH_PR
+}
+
+@test "ExtractPRNumber: It takes the last possible PR number in messages with multiple potential PR numbers" {
+  export COMMIT_MESSAGE_WITH_PR="Fix: Commit for testing (#123) (#42)"
+  run ExtractPRNumber
+  [[ $output =~ \42 ]]  # Assuming it extracts the last PR number by default
+  unset COMMIT_MESSAGE_WITH_PR
+}
+
+@test "FetchCommitMessage: It handles very long commit messages" {
+  long_msg="Fix: $(printf 'A%.0s' {1..500})"  # Generates a message "Fix: AAAAAAAAAA... (500 times)"
+  export COMMIT_MESSAGE_WITH_PR="$long_msg (#42)"
+  run FetchCommitMessage
+  [[ ${#output} -eq 507 ]]  # Length should be 507 (500 + 7 for "Fix: " and "(#42)")
+  unset COMMIT_MESSAGE_WITH_PR
+}
+
+@test "ParseCommitInfo: It handles commit messages with URL-like strings" {
+  export COMMIT_MESSAGE_WITH_PR="Fix: See https://example.com/issues/42 for more info (#42)"
+  run ParseCommitInfo
+  FINAL_MSG=$(echo "$output" | grep "^Final constructed message:" | cut -d ':' -f 2- | xargs)
+  [[ $FINAL_MSG == "orb($REPO_NAME): Fix: See https://example.com/issues/42 for more info (#42) https://github.com/$ORG_NAME/$REPO_NAME/pull/42" ]]
+  unset COMMIT_MESSAGE_WITH_PR
+}
 
 teardown() {
+  unset COMMIT_HASH
+  unset COMMIT_MESSAGE
+  unset COMMIT_MESSAGE_WITHOUT_PR
   unset COMMIT_MESSAGE_WITH_PR
+  unset FINAL_MSG
+  unset ORG_NAME
   unset PR_NUMBER
   unset REPO_NAME
-  unset COMMIT_MESSAGE
-  unset COMMIT_HASH
-  unset final_msg
+  unset CIRCLE_REPOSITORY_URL
+  unset TEST_COMMIT_MESSAGE
 }

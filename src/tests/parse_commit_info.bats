@@ -22,6 +22,15 @@ git() {
   esac
 }
 
+# Mock the cd command
+cd() {
+  # Store the directory change in a variable for inspection
+  # shellcheck disable=SC2034
+  LAST_CD_DIRECTORY="$1"
+  # You can also echo a message to indicate that cd was called, if needed
+  # echo "cd $1"
+}
+
 basename() {
   echo "$REPO_NAME"
 }

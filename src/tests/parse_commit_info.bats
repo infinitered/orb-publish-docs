@@ -8,7 +8,7 @@ setup() {
   export COMMIT_MESSAGE_WITH_PR="Test: Commit message with PR (#42)"
   export ORG_NAME="org-name"
   export REPO_NAME="repo-name"
-  export TEST_REPO_URL="https://github.com/$ORG_NAME/$REPO_NAME.git"
+  export TEST_REPO_URL="https://github.com/org-name/repo-name.git"
   export TEST_COMMIT_MESSAGE="$COMMIT_MESSAGE_WITH_PR"
 }
 
@@ -49,14 +49,14 @@ source ./src/scripts/parse_commit_info.sh
 }
 
 @test "GetNormalizedRepoURL: It fetches and normalizes HTTPS repo URL" {
-  export REPO_URL_MOCK="https://github.com/$ORG_NAME/$REPO_NAME.git"
+  export REPO_URL_MOCK="https://github.com/org-name/repo-name.git"
   run GetNormalizedRepoURL $REPO_URL_MOCK
   [[ $output == "https://github.com/org-name/repo-name" ]]
   unset REPO_URL_MOCK
 }
 
 @test "GetNormalizedRepoURL: It fetches and normalizes SSH repo URL" {
-  export REPO_URL_MOCK="git@github.com:$ORG_NAME/$REPO_NAME.git"
+  export REPO_URL_MOCK="git@github.com:org-name/repo-name.git"
   run GetNormalizedRepoURL $REPO_URL_MOCK
   [[ $output == "https://github.com/org-name/repo-name" ]]
   unset REPO_URL_MOCK
@@ -89,19 +89,19 @@ source ./src/scripts/parse_commit_info.sh
 @test "CreatePRLink: It constructs PR link" {
   export PR_NUMBER=42
   run CreatePRLink "$ORG_NAME" "$REPO_NAME" "$PR_NUMBER"
-  [[ $output == https://github.com/$ORG_NAME/$REPO_NAME/pull/42 ]]
+  [[ $output == https://github.com/org-name/repo-name/pull/42 ]]
   unset PR_NUMBER
 }
 
 @test "CreateCommitLink: It constructs commit link" {
   run CreateCommitLink "$ORG_NAME" "$REPO_NAME" "$COMMIT_HASH"
-  [[ $output == "https://github.com/$ORG_NAME/$REPO_NAME/commit/$COMMIT_HASH" ]]
+  [[ $output == "https://github.com/org-name/repo-name/commit/$COMMIT_HASH" ]]
 }
 
 @test "ParseCommitInfo: It parses and constructs the final commit message with PR link" {
   run ParseCommitInfo
   FINAL_MSG=$(echo "$output" | xargs)
-  [[ $FINAL_MSG == "orb($REPO_NAME): $COMMIT_MESSAGE_WITH_PR https://github.com/$ORG_NAME/$REPO_NAME/pull/42" ]]
+  [[ $FINAL_MSG == "orb($REPO_NAME): $COMMIT_MESSAGE_WITH_PR https://github.com/org-name/repo-name/pull/42" ]]
   >&1 echo "DEBUG: FINAL_MSG \"$FINAL_MSG\""
 }
 
@@ -109,7 +109,7 @@ source ./src/scripts/parse_commit_info.sh
   TEST_COMMIT_MESSAGE="$COMMIT_MESSAGE_WITHOUT_PR"
   run ParseCommitInfo
   FINAL_MSG=$(echo "$output" | grep "^Final constructed message:" | cut -d ':' -f 2- | xargs)
-  [[ $FINAL_MSG == "orb($REPO_NAME): $COMMIT_MESSAGE_WITHOUT_PR https://github.com/$ORG_NAME/$REPO_NAME/commit/$COMMIT_HASH" ]]
+  [[ $FINAL_MSG == "orb($REPO_NAME): $COMMIT_MESSAGE_WITHOUT_PR https://github.com/org-name/repo-name/commit/$COMMIT_HASH" ]]
   >&1 echo "DEBUG: FINAL_MSG \"$FINAL_MSG\""
 }
 
@@ -141,7 +141,7 @@ source ./src/scripts/parse_commit_info.sh
   export COMMIT_MESSAGE_WITH_PR="Fix: See https://example.com/issues/42 for more info (#42)"
   run ParseCommitInfo
   FINAL_MSG=$(echo "$output" | grep "^Final constructed message:" | cut -d ':' -f 2- | xargs)
-  [[ $FINAL_MSG == "orb($REPO_NAME): Fix: See https://example.com/issues/42 for more info (#42) https://github.com/$ORG_NAME/$REPO_NAME/pull/42" ]]
+  [[ $FINAL_MSG == "orb($REPO_NAME): Fix: See https://example.com/issues/42 for more info (#42) https://github.com/org-name/repo-name/pull/42" ]]
   unset COMMIT_MESSAGE_WITH_PR
 }
 

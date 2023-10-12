@@ -16,6 +16,11 @@ ExtractPRNumber() {
   echo "$commit_msg" | grep -o "#[0-9]\+" | grep -o "[0-9]\+" | tail -n 1 || true
 }
 
+ExtractPRNumber() {
+  local commit_msg="$1"
+  echo "$commit_msg" | grep -o "#[0-9]\+" | grep -o "[0-9]\+" | tail -n 1 || true
+}
+
 FetchCommitMessage() {
   git log -1 --pretty=%B || { echo "Fetching commit message failed"; exit 1; }
 }

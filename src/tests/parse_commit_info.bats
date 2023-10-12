@@ -133,8 +133,9 @@ source ./src/scripts/parse_commit_info.sh
   export TEST_COMMIT_MESSAGE="$COMMIT_MESSAGE_WITHOUT_PR"
   run ParseCommitInfo
   FINAL_MSG=$(echo "$output" | grep "^Final constructed message:" | cut -d ':' -f 2- | xargs)
-  echo "DEBUG: FINAL_MSG \"$FINAL_MSG\""
-  [[ $FINAL_MSG == "orb(repo-name): $COMMIT_MESSAGE_WITHOUT_PR https://github.com/org-name/repo-name/commit/$COMMIT_HASH" ]]
+  echo "DEBUG    FINAL_MSG: \"$FINAL_MSG\""
+  echo "EXPECTED FINAL_MSG: \"orb($REPO_NAME): $COMMIT_MESSAGE_WITHOUT_PR https://github.com/$ORG_NAME/$REPO_NAME/commit/$COMMIT_HASH\""
+  [[ $FINAL_MSG == "orb($REPO_NAME): $COMMIT_MESSAGE_WITHOUT_PR https://github.com/$ORG_NAME/$REPO_NAME/commit/$COMMIT_HASH" ]]
 }
 
 

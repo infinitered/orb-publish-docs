@@ -3,8 +3,6 @@
 # shellcheck disable=SC2030
 
 setup() {
-  #TODO: REMOVE WHEN DEBUGGING
-  exec 3>&1
   export COMMIT_HASH="commitHash1234567890"
   export COMMIT_MESSAGE_WITHOUT_PR="Test: Commit message without PR"
   export COMMIT_MESSAGE_WITH_PR="Test: Commit message with PR (#42)"
@@ -142,7 +140,6 @@ source ./src/scripts/parse_commit_info.sh
 
 
 teardown() {
-  exec 3>&-
   unset COMMIT_HASH
   unset COMMIT_MESSAGE
   unset COMMIT_MESSAGE_WITHOUT_PR

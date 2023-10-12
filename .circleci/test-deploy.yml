@@ -40,7 +40,7 @@ jobs:
               cd ..
             fi
             # Run Bats tests
-            bats ./src/tests/*.bats -T
+            bats --tap ./src/tests/*.bats
 workflows:
   test-deploy:
     jobs:

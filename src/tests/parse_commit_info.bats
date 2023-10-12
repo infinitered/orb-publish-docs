@@ -118,7 +118,8 @@ source ./src/scripts/parse_commit_info.sh
   export TEST_COMMIT_MESSAGE="Fix: See https://example.com/issues/42 for more info (#42)"
   run ParseCommitInfo
   FINAL_MSG=$(echo "$output" | grep "^Final constructed message:" | cut -d ':' -f 2- | xargs)
-  echo "DEBUG: FINAL_MSG \"$FINAL_MSG\""
+  echo "DEBUG    FINAL_MSG: \"$FINAL_MSG\""
+  echo "EXPECTED FINAL_MSG: \"orb($REPO_NAME): $COMMIT_MESSAGE_WITHOUT_PR https://github.com/$ORG_NAME/$REPO_NAME/commit/$COMMIT_HASH\""
   [[ $FINAL_MSG == "orb($REPO_NAME): Fix: See https://example.com/issues/42 for more info (#42) https://github.com/org-name/repo-name/pull/42" ]]
 }
 

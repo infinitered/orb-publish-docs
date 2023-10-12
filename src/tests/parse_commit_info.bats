@@ -52,14 +52,14 @@ source ./src/scripts/parse_commit_info.sh
   export REPO_URL_MOCK="https://github.com/org-name/repo-name.git"
   run GetNormalizedRepoURL $REPO_URL_MOCK
   [[ $output == "https://github.com/org-name/repo-name" ]]
-  unset REPO_URL_MOCK
+  unset $REPO_URL_MOCK
 }
 
 @test "GetNormalizedRepoURL: It fetches and normalizes SSH repo URL" {
   export REPO_URL_MOCK="git@github.com:org-name/repo-name.git"
   run GetNormalizedRepoURL $REPO_URL_MOCK
   [[ $output == "https://github.com/org-name/repo-name" ]]
-  unset REPO_URL_MOCK
+  unset $REPO_URL_MOCK
 }
 
 @test "ExtractGitHubOrgAndRepo: It extracts org and repo from HTTPS URL with .git suffix" {

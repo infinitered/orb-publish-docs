@@ -23,12 +23,12 @@ FetchCommitHash() {
 
 # Normalize the repository URL for consistent usage
 GetNormalizedRepoURL() {
-  local circle_repo_url="$1"
-  if [[ $circle_repo_url == https://* && ! $circle_repo_url == *.git ]]; then
-    echo "$circle_repo_url.git"
+  local repo_url="$1"
+  if [[ $repo_url == https://* && ! $repo_url == *.git ]]; then
+    echo "$repo_url.git"
   else
     # Convert SSH format to https format for consistency
-    echo "$circle_repo_url" | sed 's,git@,https://,' | sed 's,:,/,'
+    echo "$repo_url" | sed 's,git@,https://,' | sed 's,:,/,'
   fi
 }
 

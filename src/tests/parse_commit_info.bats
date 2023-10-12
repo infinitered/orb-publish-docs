@@ -31,7 +31,6 @@ source ./src/scripts/parse_commit_info.sh
 
 @test "FetchCommitMessage: It fetches the last commit message" {
   run FetchCommitMessage
-  echo "DEBUG: Output from FetchCommitMessage = $output"
   [[ "$output" =~ Test:\ Commit\ message\ with\ PR\ \(#42\) ]]
 }
 
@@ -56,21 +55,18 @@ source ./src/scripts/parse_commit_info.sh
 
 @test "ExtractGitHubOrgAndRepo: It extracts org and repo from HTTPS URL with .git suffix" {
   run ExtractGitHubOrgAndRepo "https://github.com/sample-org/sample-repo.git"
-  echo "DEBUG: Output from ExtractGitHubOrgAndRepo = $output"
   [ "$status" -eq 0 ]
   [ "$output" = "sample-org sample-repo" ]
 }
 
 @test "ExtractGitHubOrgAndRepo: It extracts org and repo from HTTPS URL without .git suffix" {
   run ExtractGitHubOrgAndRepo "https://github.com/sample-org/sample-repo"
-  echo "DEBUG: Output from ExtractGitHubOrgAndRepo = $output"
   [ "$status" -eq 0 ]
   [ "$output" = "sample-org sample-repo" ]
 }
 
 @test "ExtractGitHubOrgAndRepo: It throws an error when given an invalid GitHub URL" {
   run ExtractGitHubOrgAndRepo "https://invalid.com/sample-org/sample-repo.git"
-  echo "DEBUG: Output from ExtractGitHubOrgAndRepo = $output"
   [ "$status" -eq 1 ]
   [[ "$output" == "Error: Not a GitHub URL."* ]]
 }
@@ -78,29 +74,24 @@ source ./src/scripts/parse_commit_info.sh
 
 @test "ExtractPRNumber: It fetches PR number from commit message" {
   run ExtractPRNumber "$COMMIT_MESSAGE_WITH_PR"
-  echo "DEBUG: Output from ExtractPRNumber = $output"
   [[ $output =~ \42 ]]
 }
 
 @test "CreatePRLink: It constructs PR link" {
   export PR_NUMBER=42
   run CreatePRLink "$ORG_NAME" "$REPO_NAME" "$PR_NUMBER"
-  echo "DEBUG: Output from CreateCommitLink = $output"
   [[ $output == https://github.com/$ORG_NAME/$REPO_NAME/pull/42 ]]
   unset PR_NUMBER
 }
 
 @test "CreateCommitLink: It constructs commit link" {
   run CreateCommitLink "$ORG_NAME" "$REPO_NAME" "1234567890abcdef"
-  echo "DEBUG: Output from CreateCommitLink = $output"
   [[ $output == "https://github.com/$ORG_NAME/$REPO_NAME/commit/1234567890abcdef" ]]
 }
 
 @test "ParseCommitInfo: It parses and constructs the final commit message with PR link" {
   run ParseCommitInfo
-  echo "DEBUG: Output from ParseCommitInfo = $output"
   FINAL_MSG=$(echo "$output" | xargs)
-  echo "DEBUG: Extracted Final Commit Message = $FINAL_MSG"
   [[ $FINAL_MSG == "orb($REPO_NAME): $COMMIT_MESSAGE_WITH_PR https://github.com/$ORG_NAME/$REPO_NAME/pull/42" ]]
 }
 

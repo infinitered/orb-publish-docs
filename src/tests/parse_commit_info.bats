@@ -16,7 +16,7 @@ setup() {
 git() {
   case "$1" in
     log) echo "$TEST_COMMIT_MESSAGE";;
-    rev-parse) echo "1234567890abcdef";;
+    rev-parse) echo "$COMMIT_HASH";;
     config) echo "$REPO_URL_MOCK";;
     *) return 1;;
   esac
@@ -45,7 +45,7 @@ source ./src/scripts/parse_commit_info.sh
 
 @test "FetchCommitHash: It fetches the commit hash" {
   run FetchCommitHash
-  [[ $output =~ 1234567890abcdef ]]
+  [[ $output =~ $COMMIT_HASH ]]
 }
 
 @test "GetNormalizedRepoURL: It fetches and normalizes HTTPS repo URL" {
@@ -94,8 +94,8 @@ source ./src/scripts/parse_commit_info.sh
 }
 
 @test "CreateCommitLink: It constructs commit link" {
-  run CreateCommitLink "$ORG_NAME" "$REPO_NAME" "1234567890abcdef"
-  [[ $output == "https://github.com/$ORG_NAME/$REPO_NAME/commit/1234567890abcdef" ]]
+  run CreateCommitLink "$ORG_NAME" "$REPO_NAME" "$COMMIT_HASH"
+  [[ $output == "https://github.com/$ORG_NAME/$REPO_NAME/commit/$COMMIT_HASH" ]]
 }
 
 @test "ParseCommitInfo: It parses and constructs the final commit message with PR link" {
@@ -109,7 +109,7 @@ source ./src/scripts/parse_commit_info.sh
   TEST_COMMIT_MESSAGE="$COMMIT_MESSAGE_WITHOUT_PR"
   run ParseCommitInfo
   FINAL_MSG=$(echo "$output" | grep "^Final constructed message:" | cut -d ':' -f 2- | xargs)
-  [[ $FINAL_MSG == "orb($REPO_NAME): $COMMIT_MESSAGE_WITHOUT_PR https://github.com/$ORG_NAME/$REPO_NAME/commit/1234567890abcdef" ]]
+  [[ $FINAL_MSG == "orb($REPO_NAME): $COMMIT_MESSAGE_WITHOUT_PR https://github.com/$ORG_NAME/$REPO_NAME/commit/$COMMIT_HASH" ]]
   >&1 echo "DEBUG: FINAL_MSG \"$FINAL_MSG\""
 }
 

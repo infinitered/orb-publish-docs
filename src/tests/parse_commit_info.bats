@@ -99,16 +99,16 @@ source ./src/scripts/parse_commit_info.sh
 @test "ParseCommitInfo: It parses and constructs the final commit message with PR link" {
   run ParseCommitInfo
   FINAL_MSG=$(echo "$output" | xargs)
+  echo "DEBUG: FINAL_MSG \"$FINAL_MSG\""
   [[ $FINAL_MSG == "orb($REPO_NAME): $COMMIT_MESSAGE_WITH_PR https://github.com/org-name/repo-name/pull/42" ]]
-  >&1 echo "DEBUG: FINAL_MSG \"$FINAL_MSG\""
 }
 
 @test "ParseCommitInfo: It parses and constructs the final commit message with commit link" {
   export TEST_COMMIT_MESSAGE="$COMMIT_MESSAGE_WITHOUT_PR"
   run ParseCommitInfo
   FINAL_MSG=$(echo "$output" | grep "^Final constructed message:" | cut -d ':' -f 2- | xargs)
+  echo "DEBUG: FINAL_MSG \"$FINAL_MSG\""
   [[ $FINAL_MSG == "orb($REPO_NAME): $COMMIT_MESSAGE_WITHOUT_PR https://github.com/org-name/repo-name/commit/$COMMIT_HASH" ]]
-  >&1 echo "DEBUG: FINAL_MSG \"$FINAL_MSG\""
 }
 
 @test "FetchCommitMessage: It handles commit messages with special characters" {

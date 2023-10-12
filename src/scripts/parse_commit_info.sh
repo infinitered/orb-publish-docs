@@ -4,12 +4,12 @@ set -e
 
 
 # Global variable declarations
-COMMIT_MESSAGE=""
-COMMIT_HASH=""
-REPO_URL=""
-REPO_NAME=""
-PR_NUMBER=""
-final_commit_message=""
+declare -g COMMIT_MESSAGE=""
+declare -g COMMIT_HASH=""
+declare -g REPO_URL=""
+declare -g REPO_NAME=""
+declare -g PR_NUMBER=""
+declare -g final_commit_message=""
 
 ExtractPRNumber() {
   local commit_msg="$1"

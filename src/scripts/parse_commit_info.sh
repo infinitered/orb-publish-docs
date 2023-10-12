@@ -83,16 +83,16 @@ CreateCommitLink() {
 }
 
 ParseCommitInfo() {
-  cd "$SOURCE_REPO_DIRECTORY" || { echo "Changing directory failed"; exit 1; }
+  if [ "$ORB_TEST_ENV" = "bats-core" ]; then
+    REPOSITORY_URL="$TEST_REPO_URL"
+  else
+    cd "$SOURCE_REPO_DIRECTORY" || { echo "Changing directory failed"; exit 1; }
+    REPOSITORY_URL="$CIRCLE_REPOSITORY_URL"
+  fi
 
   COMMIT_MESSAGE=$(FetchCommitMessage)
   COMMIT_HASH=$(FetchCommitHash)
 
-  if [ "$ORB_TEST_ENV" = "bats-core" ]; then
-    REPOSITORY_URL="$TEST_REPO_URL"
-  else
-    REPOSITORY_URL="$CIRCLE_REPOSITORY_URL"
-  fi
 
   REPO_URL=$(GetNormalizedRepoURL "$REPOSITORY_URL")
 

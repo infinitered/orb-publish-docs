@@ -2,7 +2,6 @@
 
 set -e
 
-
 # Global variable declarations
 declare -g PARSE_COMMIT_COMMIT_MESSAGE=""
 declare -g PARSE_COMMIT_COMMIT_HASH=""
@@ -13,48 +12,57 @@ declare -g final_commit_message=""
 
 ExtractPRNumber() {
   local commit_msg="$1"
-  echo "$commit_msg" | grep -o "#[0-9]\+" | grep -o "[0-9]\+" | tail -n 1 || true
+  echo "Debug: Entering ExtractPRNumber with commit_msg: $commit_msg" >&2
+  local result=$(echo "$commit_msg" | grep -o "#[0-9]\+" | grep -o "[0-9]\+" | tail -n 1 || true)
+  echo "Debug: Exiting ExtractPRNumber with result: $result" >&2
+  echo "$result"
 }
 
 FetchCommitMessage() {
-  git log -1 --pretty=%B || { echo "Fetching commit message failed"; exit 1; }
+  echo "Debug: Entering FetchCommitMessage" >&2
+  local result=$(git log -1 --pretty=%B || { echo "Fetching commit message failed" >&2; exit 1; })
+  echo "Debug: Exiting FetchCommitMessage with result: $result" >&2
+  echo "$result"
 }
 
 FetchCommitHash() {
-  git rev-parse HEAD || { echo "Fetching commit hash failed"; exit 1; }
+  echo "Debug: Entering FetchCommitHash" >&2
+  local result=$(git rev-parse HEAD || { echo "Fetching commit hash failed" >&2; exit 1; })
+  echo "Debug: Exiting FetchCommitHash with result: $result" >&2
+  echo "$result"
 }
 
-# Normalize the repository URL for consistent usage
 GetNormalizedRepoURL() {
   local circle_repo_url="$1"
+  echo "Debug: Entering GetNormalizedRepoURL with circle_repo_url: $circle_repo_url" >&2
 
-
+  local result
   if [[ $circle_repo_url == https://* ]]; then
-    # If it's already an HTTPS URL, just ensure it doesn't have the .git suffix
-    echo "${circle_repo_url%.git}"
+    result="${circle_repo_url%.git}"
   else
-    # Convert SSH format to https format for consistency
-    local https_url="${circle_repo_url/git@github.com:/https://github.com/}"
-    echo "${https_url%.git}"      # Strip trailing .git if present
+    result="${circle_repo_url/git@github.com:/https://github.com/}"
+    result="${result%.git}"
   fi
+  echo "Debug: Exiting GetNormalizedRepoURL with result: $result" >&2
+  echo "$result"
 }
 
 ExtractGitHubOrgAndRepo() {
   local repo_url="$1"
+  echo "Debug: Entering ExtractGitHubOrgAndRepo with repo_url: $repo_url" >&2
 
   if [[ $repo_url != *github.com* ]]; then
     echo "Error: Not a GitHub URL." >&2
     exit 1
   fi
 
-  local extracted
-  extracted=$(echo "$repo_url" | awk -F'/' '{gsub(".git", "", $NF); print $(NF-1), $NF}')
+  local extracted=$(echo "$repo_url" | awk -F'/' '{gsub(".git", "", $NF); print $(NF-1), $NF}')
 
   if [ -z "$extracted" ]; then
     echo "Error: Invalid GitHub URL format." >&2
     exit 1
   fi
-
+  echo "Debug: Exiting ExtractGitHubOrgAndRepo with result: $extracted" >&2
   echo "$extracted"
 }
 
@@ -65,65 +73,66 @@ ConstructCommitMessage() {
   local pr_num="$4"
   local commit_hash="$5"
 
+  echo "Debug: Entering ConstructCommitMessage with org: $org, repo: $repo, commit_msg: $commit_msg, pr_num: $pr_num, commit_hash: $commit_hash" >&2
+
   local link
   if [ -n "$pr_num" ]; then
     link=$(CreatePRLink "$org" "$repo" "$pr_num")
   else
     link=$(CreateCommitLink "$org" "$repo" "$commit_hash")
   fi
-  echo "orb($repo): $commit_msg $link"
+  local result="orb($repo): $commit_msg $link"
+  echo "Debug: Exiting ConstructCommitMessage with result: $result" >&2
+  echo "$result"
 }
 
-# Create PR Link
 CreatePRLink() {
   local org="$1"
   local repo="$2"
   local pr_number="$3"
-  echo "https://github.com/$org/$repo/pull/$pr_number"
+  echo "Debug: Entering CreatePRLink with org: $org, repo: $repo, pr_number: $pr_number" >&2
+  local result="https://github.com/$org/$repo/pull/$pr_number"
+  echo "Debug: Exiting CreatePRLink with result: $result" >&2
+  echo "$result"
 }
 
-# Create Commit Link
 CreateCommitLink() {
   local org="$1"
   local repo="$2"
   local commit_hash="$3"
-  echo "https://github.com/$org/$repo/commit/$commit_hash"
+  echo "Debug: Entering CreateCommitLink with org: $org, repo: $repo, commit_hash: $commit_hash" >&2
+  local result="https://github.com/$org/$repo/commit/$commit_hash"
+  echo "Debug: Exiting CreateCommitLink with result: $result" >&2
+  echo "$result"
 }
 
 ParseCommitInfo() {
+  echo "Debug: Entering ParseCommitInfo" >&2
+
   if [ "$ORB_TEST_ENV" = "bats-core" ]; then
     PARSE_COMMIT_REPO_URL=$(GetNormalizedRepoURL "$TEST_REPO_URL")
   else
+    echo "Debug: CIRCLE_REPOSITORY_URL before normalization: $CIRCLE_REPOSITORY_URL" >&2
     PARSE_COMMIT_REPO_URL=$(GetNormalizedRepoURL "$CIRCLE_REPOSITORY_URL")
   fi
+
+  echo "Debug: PARSE_COMMIT_REPO_URL after normalization: $PARSE_COMMIT_REPO_URL" >&2
 
   PARSE_COMMIT_COMMIT_MESSAGE=$(FetchCommitMessage)
   PARSE_COMMIT_COMMIT_HASH=$(FetchCommitHash)
 
-  read -r ORG_NAME PARSE_COMMIT_REPO_NAME <<< "$(ExtractGitHubOrgAndRepo "$PARSE_COMMIT_REPO_URL")"
+  local extracted
+  extracted=$(ExtractGitHubOrgAndRepo "$PARSE_COMMIT_REPO_URL")
+
+  local org
+  local repo
+  read -r org repo <<<"$extracted"
+
+  PARSE_COMMIT_REPO_NAME="$repo"
   PARSE_COMMIT_PR_NUMBER=$(ExtractPRNumber "$PARSE_COMMIT_COMMIT_MESSAGE")
 
-  final_commit_message=$(ConstructCommitMessage "$ORG_NAME" "$PARSE_COMMIT_REPO_NAME" "$PARSE_COMMIT_COMMIT_MESSAGE" "$PARSE_COMMIT_PR_NUMBER" "$PARSE_COMMIT_COMMIT_HASH")
-
-  echo "$final_commit_message"
+  final_commit_message=$(ConstructCommitMessage "$org" "$repo" "$PARSE_COMMIT_COMMIT_MESSAGE" "$PARSE_COMMIT_PR_NUMBER" "$PARSE_COMMIT_COMMIT_HASH")
+  echo "Debug: Exiting ParseCommitInfo with final_commit_message: $final_commit_message" >&2
 }
 
-
-ORB_TEST_ENV="bats-core"
-if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
-
-  cd "$SOURCE_REPO_DIRECTORY" || { echo "Changing directory failed"; exit 1; }
-
-  final_commit_message="$(ParseCommitInfo)"
-
-  # Logging statements to inspect variables
-  echo "CIRCLE_REPOSITORY_URL: $CIRCLE_REPOSITORY_URL"
-  echo "SOURCE_REPO_DIRECTORY: $SOURCE_REPO_DIRECTORY"
-  echo "PARSE_COMMIT_COMMIT_MESSAGE: $PARSE_COMMIT_COMMIT_MESSAGE"
-  echo "PARSE_COMMIT_COMMIT_HASH: $PARSE_COMMIT_COMMIT_HASH"
-  echo "PARSE_COMMIT_REPO_URL: $PARSE_COMMIT_REPO_URL"
-  echo "PARSE_COMMIT_REPO_NAME: $PARSE_COMMIT_REPO_NAME"
-  echo "PARSE_COMMIT_PR_NUMBER: $PARSE_COMMIT_PR_NUMBER"
-  echo "final_commit_message: $final_commit_message"
-  echo "export FINAL_COMMIT_MESSAGE='$final_commit_message'" >> "$BASH_ENV"
-fi
+ParseCommitInfo

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 GenerateCommitMessage() {
-  cd "$SOURCE_REPO_DIRECTORY" || { echo "Changing directory failed"; exit 1; }
+  cd "$SOURCE_REPO_DIRECTORY" || { echo "Changing directory failed" >&2; exit 1; }
 
   # Fetch COMMIT_MESSAGE and COMMIT_HASH from git logs
   COMMIT_MESSAGE=$(git log -1 --pretty=%B)
@@ -26,6 +26,7 @@ GenerateCommitMessage() {
   } >> "$BASH_ENV"
 }
 
-if [ "${0#*"bats-core"}" = "$0" ]; then
+ORB_TEST_ENV="bats-core"
+if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
   GenerateCommitMessage
 fi

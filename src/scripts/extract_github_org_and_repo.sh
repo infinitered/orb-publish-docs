@@ -34,7 +34,9 @@ ValidateAndExtractRepoInfo() {
   } >> "$BASH_ENV"
 }
 
-# Only call the functions if not in a Bats test environment
+
+# Check for bats
+ORB_TEST_ENV="bats-core"
 if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
   ChangeToSourceRepoDirectory
   ValidateAndExtractRepoInfo

@@ -2,7 +2,7 @@
 
 # Function to change to the source repository directory
 ChangeToSourceRepoDirectory() {
-  cd "$SOURCE_REPO_DIRECTORY" || { echo "Changing directory failed"; exit 1; }
+  cd "$SOURCE_REPO_DIRECTORY" || { echo "Changing directory failed" >&2; exit 1; }
 }
 
 # Function to normalize the GitHub URL
@@ -21,6 +21,7 @@ NormalizeRepoURL() {
 }
 
 # Only call the functions if not in a Bats test environment
+ORB_TEST_ENV="bats-core"
 if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
   ChangeToSourceRepoDirectory
   NormalizeRepoURL "$@"

@@ -2,7 +2,7 @@
 
 # Function to change to the source repository directory
 ChangeToSourceRepoDirectory() {
-  cd "$SOURCE_REPO_DIRECTORY" || { echo "Changing directory failed"; exit 1; }
+  cd "$SOURCE_REPO_DIRECTORY" || { echo "Changing directory failed" >&2; exit 1; }
 }
 
 
@@ -13,8 +13,8 @@ FetchCommitInfo() {
   local COMMIT_HASH
 
   # Fetch the last commit message and hash
-  COMMIT_MESSAGE=$(git log -1 --pretty=%B || { echo "Fetching commit message failed"; exit 1; })
-  COMMIT_HASH=$(git rev-parse HEAD || { echo "Fetching commit hash failed"; exit 1; })
+  COMMIT_MESSAGE=$(git log -1 --pretty=%B || { echo "Fetching commit message failed" >&2 ; exit 1; })
+  COMMIT_HASH=$(git rev-parse HEAD || { echo "Fetching commit hash failed" >&2 ; exit 1; })
 
   # Extract PR number from the commit message using regex
   PR_NUMBER=$(echo "$COMMIT_MESSAGE" | grep -oP '(Merge pull request #\K\d+)|(\(#\K\d+\))')
@@ -29,6 +29,7 @@ FetchCommitInfo() {
 }
 
 # Only call the function if not in a Bats test environment
+ORB_TEST_ENV="bats-core"
 if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
   ChangeToSourceRepoDirectory
   FetchCommitInfo

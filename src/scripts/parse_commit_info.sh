@@ -125,7 +125,5 @@ if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
   echo "PARSE_COMMIT_REPO_NAME: $PARSE_COMMIT_REPO_NAME"
   echo "PARSE_COMMIT_PR_NUMBER: $PARSE_COMMIT_PR_NUMBER"
   echo "final_commit_message: $final_commit_message"
-
-  export FINAL_PARSE_COMMIT_COMMIT_MESSAGE=$final_commit_message
-  echo "export FINAL_PARSE_COMMIT_COMMIT_MESSAGE='$final_commit_message'" >> "$BASH_ENV"
+  echo "export FINAL_COMMIT_MESSAGE='$final_commit_message'" >> "$BASH_ENV"
 fi

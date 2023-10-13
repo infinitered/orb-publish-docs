@@ -1,0 +1,6 @@
+description: >
+  "Constructs the final commit message incorporating all relevant details and links."
+steps:
+  - run:
+      name: "Generate Commit Message"
+      command: <<include(scripts/generate_commit_message.sh)>>

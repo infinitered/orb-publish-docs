@@ -1,0 +1,6 @@
+description: >
+  "Fetch the last commit message and commit hash from the source repository."
+steps:
+  - run:
+      name: "Fetch Commit Info"
+      command: <<include(scripts/fetch_commit_info.sh)>>

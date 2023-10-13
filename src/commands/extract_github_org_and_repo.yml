@@ -1,0 +1,6 @@
+description: >
+  "Extracts GitHub organization and repository name from the repository URL."
+steps:
+  - run:
+      name: "Extract GitHub Organization and Repository"
+      command: <<include(scripts/extract_github_org_and_repo.sh)>>

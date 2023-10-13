@@ -9,6 +9,7 @@ declare -g PARSE_COMMIT_REPO_URL=""
 declare -g PARSE_COMMIT_REPO_NAME=""
 declare -g PARSE_COMMIT_PR_NUMBER=""
 declare -g final_commit_message=""
+declare -g ORB_TEST_ENV="bats-core"
 
 ExtractPRNumber() {
   local commit_msg="$1"
@@ -112,7 +113,7 @@ ParseCommitInfo() {
 
   echo "Debug: Entering ParseCommitInfo" >&2
 
-  if [ "$ORB_TEST_ENV" = "bats-core" ]; then
+  if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
     PARSE_COMMIT_REPO_URL=$(GetNormalizedRepoURL "$TEST_REPO_URL")
   else
     echo "Debug: CIRCLE_REPOSITORY_URL before normalization: $CIRCLE_REPOSITORY_URL" >&2
@@ -138,7 +139,6 @@ ParseCommitInfo() {
   echo "Debug: Exiting ParseCommitInfo with final_commit_message: $final_commit_message" >&2
 }
 
-ORB_TEST_ENV="bats-core"
 if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
 
   cd "$SOURCE_REPO_DIRECTORY" || { echo "Changing directory failed" >&2; exit 1; }
@@ -150,6 +150,7 @@ if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
   fi
 
   echo "Debug: Entering ParseCommitInfo" >&2
+  echo "Debug: CIRCLE_REPOSITORY_URL before normalization: $CIRCLE_REPOSITORY_URL" >&2
   final_commit_message="$(ParseCommitInfo)"
   echo "Debug: Exiting ParseCommitInfo with final_commit_message: $final_commit_message" >&2
 

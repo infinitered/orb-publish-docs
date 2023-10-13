@@ -107,6 +107,9 @@ CreateCommitLink() {
 }
 
 ParseCommitInfo() {
+
+  cd $SOURCE_REPO_DIRECTORY || { echo "Changing directory failed"; exit 1; }
+
   echo "Debug: Entering ParseCommitInfo" >&2
 
   if [ "$ORB_TEST_ENV" = "bats-core" ]; then
@@ -135,4 +138,30 @@ ParseCommitInfo() {
   echo "Debug: Exiting ParseCommitInfo with final_commit_message: $final_commit_message" >&2
 }
 
-ParseCommitInfo
+ORB_TEST_ENV="bats-core"
+if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
+
+  cd "$SOURCE_REPO_DIRECTORY" || { echo "Changing directory failed" >&2; exit 1; }
+
+  # Check if running in a git repository
+  if [ ! -d ".git" ]; then
+    echo "Error: Not a git repository. Exiting." >&2
+    exit 1
+  fi
+
+  echo "Debug: Entering ParseCommitInfo" >&2
+  final_commit_message="$(ParseCommitInfo)"
+  echo "Debug: Exiting ParseCommitInfo with final_commit_message: $final_commit_message" >&2
+
+  # Logging statements to inspect variables, output to stderr
+  echo "Debug: CIRCLE_REPOSITORY_URL: $CIRCLE_REPOSITORY_URL" >&2
+  echo "Debug: SOURCE_REPO_DIRECTORY: $SOURCE_REPO_DIRECTORY" >&2
+  echo "Debug: PARSE_COMMIT_COMMIT_MESSAGE: $PARSE_COMMIT_COMMIT_MESSAGE" >&2
+  echo "Debug: PARSE_COMMIT_COMMIT_HASH: $PARSE_COMMIT_COMMIT_HASH" >&2
+  echo "Debug: PARSE_COMMIT_REPO_URL: $PARSE_COMMIT_REPO_URL" >&2
+  echo "Debug: PARSE_COMMIT_REPO_NAME: $PARSE_COMMIT_REPO_NAME" >&2
+  echo "Debug: PARSE_COMMIT_PR_NUMBER: $PARSE_COMMIT_PR_NUMBER" >&2
+  echo "Debug: final_commit_message: $final_commit_message" >&2
+
+  echo "export FINAL_COMMIT_MESSAGE='$final_commit_message'" >> "$BASH_ENV"
+fi

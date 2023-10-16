@@ -16,26 +16,20 @@ FetchCommitInfo() {
   COMMIT_HASH=$(git rev-parse HEAD || { echo "Fetching commit hash failed" >&2 ; exit 1; })
   echo "COMMIT_HASH: $COMMIT_HASH" >&2
 
-  PR_NUMBER=$(echo "$COMMIT_MESSAGE" | grep -oP '(Merge pull request #\K\d+)|(\(#\K\d+\))')
+  PR_NUMBER=$(echo "$COMMIT_MESSAGE" | grep -oP '(Merge pull request #\K\d+)|(\(#\K\d+\))' || true)
   PR_NUMBER=${PR_NUMBER:-""}
 
-  # shellcheck disable=SC2086
 
   echo "COMMIT_MESSAGE: $COMMIT_MESSAGE" >&2
-  echo "export COMMIT_MESSAGE=\"${COMMIT_MESSAGE}\"" >> $BASH_ENV
+  echo "export COMMIT_MESSAGE=\"${COMMIT_MESSAGE}\"" >> "$BASH_ENV"
   echo "COMMIT_HASH: $COMMIT_HASH" >&2
-  echo "export COMMIT_HASH=\"${COMMIT_HASH}\"" >> $BASH_ENV
+  echo "export COMMIT_HASH=\"${COMMIT_HASH}\"" >> "$BASH_ENV"
   echo "PR_NUMBER: $PR_NUMBER" >&2
-  echo "export PR_NUMBER=\"$PR_NUMBER\"" >> $BASH_ENV
-
-  exit 0
+  echo "export PR_NUMBER=\"$PR_NUMBER\"" >> "BASH_ENV"
 }
 
 ORB_TEST_ENV="bats-core"
 if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
   ChangeToSourceRepoDirectory
   FetchCommitInfo
-  exit  0
 fi
-
-exit 0

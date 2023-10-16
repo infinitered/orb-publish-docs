@@ -10,12 +10,20 @@ NormalizeRepoURL() {
   local REPO_URL="$1"
   local NORMALIZED_REPO_URL
 
+  echo "REPO_URL: $REPO_URL" >&2
+
   if [[ "$REPO_URL" == https://* ]]; then
+    echo "HTTPS URL detected" >&2
     NORMALIZED_REPO_URL="${REPO_URL%.git}"
   else
+    echo "SSH URL detected" >&2
     NORMALIZED_REPO_URL="${REPO_URL/git@github.com:/https://github.com/}"
     NORMALIZED_REPO_URL="${NORMALIZED_REPO_URL%.git}"
   fi
+
+  echo "NORMALIZED_REPO_URL: $NORMALIZED_REPO_URL" >&2
+
+
 
   echo "export NORMALIZED_REPO_URL=\"${NORMALIZED_REPO_URL}\"" >> "$BASH_ENV"
 }
@@ -24,5 +32,5 @@ NormalizeRepoURL() {
 ORB_TEST_ENV="bats-core"
 if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
   ChangeToSourceRepoDirectory
-  NormalizeRepoURL "$@"
+  NormalizeRepoURL "$CIRCLE_REPOSITORY_URL"
 fi

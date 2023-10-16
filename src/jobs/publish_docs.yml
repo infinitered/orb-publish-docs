@@ -68,4 +68,8 @@ steps:
       repo_directory: <<parameters.target_repo_directory>>
   - copy_docs_to_target
   - build_docusaurus
+  - fetch_commit_info
+  - normalize_repository_url
+  - extract_github_org_and_repo
+  - generate_commit_message
   - commit_and_push_to_target

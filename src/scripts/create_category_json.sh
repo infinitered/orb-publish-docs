@@ -28,7 +28,7 @@ CreateCategoryJSON() {
         -e "s|\${PROJECT_NAME}|$PROJECT_NAME|g" \
         > "$TARGET_REPO_DIRECTORY/docs/$PROJECT_NAME/_category_.json"
 
-    echo "_category_.json file created successfully."
+    echo "_category_.json file created successfully." >&2
 }
 
 # Check for bats

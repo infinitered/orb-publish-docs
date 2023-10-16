@@ -1,0 +1,6 @@
+description: >
+  "Normalizes the GitHub URL for use in later parts of the script."
+steps:
+  - run:
+      name: "Normalize Repository URL"
+      command: <<include(scripts/normalize_repository_url.sh)>>

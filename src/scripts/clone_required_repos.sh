@@ -34,12 +34,13 @@ CloneSourceRepo() {
     # For tag builds, checkout the commit instead of a branch
     echo "Cloning source repository ($CIRCLE_REPOSITORY_URL) for tag $CIRCLE_TAG to $SOURCE_REPO_DIRECTORY" >&2
     git clone "$CIRCLE_REPOSITORY_URL" "$SOURCE_REPO_DIRECTORY" || { echo "Failed to clone source repository"; exit 1; }
-    cd "$SOURCE_REPO_DIRECTORY"
+    cd "$SOURCE_REPO_DIRECTORY" || { echo "Failed to change directory to $SOURCE_REPO_DIRECTORY"; exit 1; }
     git checkout "$CIRCLE_TAG"
   elif [ -n "$CIRCLE_BRANCH" ]; then
     # For branch builds, checkout the specific branch
     echo "Cloning the $CIRCLE_BRANCH branch of source repository ($CIRCLE_REPOSITORY_URL) to $SOURCE_REPO_DIRECTORY" >&2
     git clone --branch "$CIRCLE_BRANCH" "$CIRCLE_REPOSITORY_URL" "$SOURCE_REPO_DIRECTORY" || { echo "Failed to clone source repository"; exit 1; }
+    cd "$SOURCE_REPO_DIRECTORY" || { echo "Failed to change directory to $SOURCE_REPO_DIRECTORY"; exit 1; }
   else
     echo "Neither CIRCLE_BRANCH nor CIRCLE_TAG is set. Unable to determine which branch or tag to clone." >&2
     exit 1

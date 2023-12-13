@@ -3,6 +3,8 @@
 # Function to log environment variables
 LogEnvironmentVariables() {
   echo "Logging Environment Variables:"
+  echo "CIRCLE_BRANCH: $CIRCLE_BRANCH"
+  echo "CIRCLE_TAG: $CIRCLE_TAG"
   echo "CIRCLE_REPOSITORY_URL: $CIRCLE_REPOSITORY_URL"
   echo "SOURCE_REPO_DIRECTORY: $SOURCE_REPO_DIRECTORY"
   echo "TARGET_REPO: $TARGET_REPO"
@@ -28,8 +30,20 @@ AddGithubToKnownHosts() {
 
 # Function to clone the source repository
 CloneSourceRepo() {
-  echo "Cloning the $CIRCLE_BRANCH branch of source repository ($CIRCLE_REPOSITORY_URL) to $SOURCE_REPO_DIRECTORY" >&2
-  git clone --branch "$CIRCLE_BRANCH" "$CIRCLE_REPOSITORY_URL" "$SOURCE_REPO_DIRECTORY" || { echo "Failed to clone source repository"; exit 1; }
+  if [ -n "$CIRCLE_TAG" ]; then
+    # For tag builds, checkout the commit instead of a branch
+    echo "Cloning source repository ($CIRCLE_REPOSITORY_URL) for tag $CIRCLE_TAG to $SOURCE_REPO_DIRECTORY" >&2
+    git clone "$CIRCLE_REPOSITORY_URL" "$SOURCE_REPO_DIRECTORY" || { echo "Failed to clone source repository"; exit 1; }
+    cd "$SOURCE_REPO_DIRECTORY"
+    git checkout "$CIRCLE_TAG"
+  elif [ -n "$CIRCLE_BRANCH" ]; then
+    # For branch builds, checkout the specific branch
+    echo "Cloning the $CIRCLE_BRANCH branch of source repository ($CIRCLE_REPOSITORY_URL) to $SOURCE_REPO_DIRECTORY" >&2
+    git clone --branch "$CIRCLE_BRANCH" "$CIRCLE_REPOSITORY_URL" "$SOURCE_REPO_DIRECTORY" || { echo "Failed to clone source repository"; exit 1; }
+  else
+    echo "Neither CIRCLE_BRANCH nor CIRCLE_TAG is set. Unable to determine which branch or tag to clone." >&2
+    exit 1
+  fi
 }
 
 # Function to clone the target repository

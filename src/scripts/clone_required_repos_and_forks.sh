@@ -30,13 +30,19 @@ AddGithubToKnownHosts() {
 
 CloneSourceRepo() {
   # Check if this is a pull request from a fork
-  if [ -n "$CIRCLE_PR_USERNAME" ] && [ -n "$CIRCLE_PR_REPONAME" ]; then
-        # If this is a PR from a fork, clone the fork's repo
-        FORK_REPO="https://github.com/$CIRCLE_PR_USERNAME/$CIRCLE_PR_REPONAME.git"
-        echo "Cloning forked repository ($FORK_REPO) for PR $CIRCLE_PR_NUMBER to $SOURCE_REPO_DIRECTORY" >&2
-        git clone "$FORK_REPO" "$SOURCE_REPO_DIRECTORY" || { echo "Failed to clone forked repository"; exit 1; }
-        cd "$SOURCE_REPO_DIRECTORY" || { echo "Failed to change directory to $SOURCE_REPO_DIRECTORY"; exit 1; }
-        git checkout "$CIRCLE_BRANCH"
+ if [ -n "$CIRCLE_PR_USERNAME" ] && [ -n "$CIRCLE_PR_REPONAME" ]; then
+   # If this is a PR from a fork, clone the fork's repo
+   FORK_REPO="https://github.com/$CIRCLE_PR_USERNAME/$CIRCLE_PR_REPONAME.git"
+   echo "Cloning forked repository ($FORK_REPO) for PR $CIRCLE_PR_NUMBER to $SOURCE_REPO_DIRECTORY" >&2
+   git clone "$FORK_REPO" "$SOURCE_REPO_DIRECTORY" || { echo "Failed to clone forked repository"; exit 1; }
+   cd "$SOURCE_REPO_DIRECTORY" || { echo "Failed to change directory to $SOURCE_REPO_DIRECTORY"; exit 1; }
+
+   # Extract PR number from CIRCLE_BRANCH (which is in format "pull/1377")
+   PR_NUM=$(echo $CIRCLE_BRANCH | cut -d'/' -f2)
+
+   git fetch origin pull/$PR_NUM/head:pr-$PR_NUM
+   git checkout pr-$PR_NUM
+ fi
   elif [ -n "$CIRCLE_TAG" ]; then
     # For tag builds, checkout the commit instead of a branch
     echo "Cloning source repository ($CIRCLE_REPOSITORY_URL) for tag $CIRCLE_TAG to $SOURCE_REPO_DIRECTORY" >&2

@@ -1,0 +1,5 @@
+description: A command to require manual approval for continuing the workflow
+machine: true
+steps:
+    - hold:
+      type: approval

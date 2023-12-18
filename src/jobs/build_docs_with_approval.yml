@@ -1,0 +1,71 @@
+description: "Test the documentation without pushing changes."
+executor: node/default
+parameters:
+  project_name:
+    type: string
+    default: ""
+    description: "The name of the package. Defaults to the repository name if empty."
+  source_docs_dir:
+    type: string
+    default: "docs"
+    description: "The path to the ir-docs folder in the repository. Defaults to './docs'."
+  target_docs_dir:
+    type: string
+    default: "docs"
+    description: "The path to the ir-docs folder in the repository. Defaults to './docs'."
+  label:
+    type: string
+    default: ""
+    description: "The label for this section that will appear in the sidebar."
+  description:
+    type: string
+    default: ""
+    description: "The description of the category that this documentation where these docs will live in the sidebar."
+  target_repo:
+    type: string
+    default: ""
+    description: "The GitHub SSH URL of the target repository where the documentation resides."
+  git_username:
+    type: string
+    default: ""
+    description: "The Git username for commit and push operations."
+  git_email:
+    type: string
+    default: ""
+    description: "The Git email for commit and push operations."
+  target_repo_directory:
+    type: string
+    default: "target"
+    description: "The directory where the clone of the target repo will been cloned."
+  source_repo_directory:
+    type: string
+    default: "source"
+    description: "The directory where the clone of the source repo has been cloned."
+steps:
+  - manual_approval
+  - validate_params:
+      git_email: <<parameters.git_email>>
+      git_username: <<parameters.git_username>>
+      target_repo: <<parameters.target_repo>>
+      description: <<parameters.description>>
+      label: <<parameters.label>>
+      project_name: <<parameters.project_name>>
+  - run:
+      name: Set Environment Variables
+      environment:
+        DESCRIPTION: <<parameters.description>>
+        GIT_EMAIL: <<parameters.git_email>>
+        GIT_USERNAME: <<parameters.git_username>>
+        LABEL: <<parameters.label>>
+        PROJECT_NAME: <<parameters.project_name>>
+        SOURCE_DOCS_DIR: <<parameters.source_docs_dir>>
+        SOURCE_REPO_DIRECTORY_PARAM: <<parameters.source_repo_directory>>
+        TARGET_REPO: <<parameters.target_repo>>
+        TARGET_DOCS_DIR: <<parameters.target_docs_dir>>
+        TARGET_REPO_DIRECTORY_PARAM: <<parameters.target_repo_directory>>
+      command: <<include(scripts/log_env_vars.sh)>>
+  - clone_required_repos_and_forks
+  - install_and_cache_yarn_dependencies:
+      repo_directory: <<parameters.target_repo_directory>>
+  - copy_docs_to_target
+  - build_docusaurus

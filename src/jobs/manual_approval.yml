@@ -1,5 +1,0 @@
-description: "A job to manually approve continuing the workflow"
-machine: true
-steps:
-  - hold:
-      type: approval

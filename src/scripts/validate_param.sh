@@ -5,7 +5,7 @@ ValidateParam() {
     echo "Error: Missing parameter"
     exit 1
   fi
-  echo "Param is set correctly"
+  echo "Param is set"
 }
 
 ORB_TEST_ENV="bats-core"

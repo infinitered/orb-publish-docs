@@ -1,4 +1,4 @@
-description: "Test the documentation without pushing changes."
+description: "Test the documentation"
 executor: node/default
 parameters:
   project_name:
@@ -41,14 +41,16 @@ parameters:
     type: string
     default: "source"
     description: "The directory where the clone of the source repo has been cloned."
-  manual_approval_granted:
+  confirm_manual_approval_in_place:
     type: string
     default: ""
-    description: "This job will run code from forked repos. It should always be reviewed before this job is run."
+    description: >
+      This job will run code from forked repos. Code should always be manually reviewed before this job is run. Pass
+      'yes' to this parameter to confirm that you've set up an approval step."
 steps:
   - validate_param:
-      param_name: 'manual_approval_granted'
-      param_value: "<<parameters.manual_approval_granted>>"
+      param_name: 'confirm_manual_approval_in_place'
+      param_value: "<<parameters.confirm_manual_approval_in_place>>"
   - validate_params:
       git_email: <<parameters.git_email>>
       git_username: <<parameters.git_username>>

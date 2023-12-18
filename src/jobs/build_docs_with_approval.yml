@@ -41,8 +41,14 @@ parameters:
     type: string
     default: "source"
     description: "The directory where the clone of the source repo has been cloned."
+  manual_approval_granted:
+    type: boolean
+    default: false
+    description: "This job will run code from forked repos. It should always be reviewed before this job is run."
 steps:
-  - manual_approval
+  - validate_param:
+      param_name: "manual_approval_granted"
+      param_value: true
   - validate_params:
       git_email: <<parameters.git_email>>
       git_username: <<parameters.git_username>>

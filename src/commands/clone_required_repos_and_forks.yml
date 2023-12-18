@@ -1,0 +1,6 @@
+description: >
+  "Setup git and clone required repositories"
+steps:
+  - run:
+      name: Configure Git and Clone Repositories
+      command: <<include(scripts/clone_required_repos_and_forks.sh)>>

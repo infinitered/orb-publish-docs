@@ -29,7 +29,15 @@ AddGithubToKnownHosts() {
 }
 
 CloneSourceRepo() {
-  if [ -n "$CIRCLE_TAG" ]; then
+  # Check if this is a pull request from a fork
+  if [ -n "$CIRCLE_PR_USERNAME" ] && [ -n "$CIRCLE_PR_REPONAME" ]; then
+        # If this is a PR from a fork, clone the fork's repo
+        FORK_REPO="https://github.com/$CIRCLE_PR_USERNAME/$CIRCLE_PR_REPONAME.git"
+        echo "Cloning forked repository ($FORK_REPO) for PR $CIRCLE_PR_NUMBER to $SOURCE_REPO_DIRECTORY" >&2
+        git clone "$FORK_REPO" "$SOURCE_REPO_DIRECTORY" || { echo "Failed to clone forked repository"; exit 1; }
+        cd "$SOURCE_REPO_DIRECTORY" || { echo "Failed to change directory to $SOURCE_REPO_DIRECTORY"; exit 1; }
+        git checkout "$CIRCLE_BRANCH"
+  elif [ -n "$CIRCLE_TAG" ]; then
     # For tag builds, checkout the commit instead of a branch
     echo "Cloning source repository ($CIRCLE_REPOSITORY_URL) for tag $CIRCLE_TAG to $SOURCE_REPO_DIRECTORY" >&2
     git clone "$CIRCLE_REPOSITORY_URL" "$SOURCE_REPO_DIRECTORY"

@@ -34,7 +34,7 @@ repository.
 
 ## Required Permissions
 
-> [!Info]
+> [!Note]
 > For the orb to work the CircleCI project must have a **User Key** with:
 > * **READ** permissions for the **Source** repo
 > * **READ/WRITE** permissions for the **Target** repo

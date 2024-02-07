@@ -32,6 +32,12 @@ repository.
 - CircleCI account
 - A Docusaurus documentation repository
 
+## Required Permissions
+
+For the orb to work the CircleCI project must have a **User Key** with:
+* **READ** permissions for the **Source** repo
+* **READ/WRITE** permissions for the **Target** repo
+
 ## Parameters
 
 | Parameter         | Type   | Description                                                                                     |

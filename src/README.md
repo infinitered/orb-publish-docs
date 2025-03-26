@@ -43,6 +43,7 @@ repository.
 | `label`           | String | The label that will appear in the sidebar of the docs site. Default is "package-name".           |
 | `project_name`    | String | The path where these documents will be located on the docs site. Default is an empty string.     |
 | `source_docs_dir`| String | The path to the directory containing the source markdown files. Default is "./docs".              |
+| `ssh_key_fingerprint`| String | The fingerprint of the SSH key to use for pushing to the target repository. Optional.        |
 
 ## Basic Example
 
@@ -65,6 +66,8 @@ workflows:
           label: "Example Package"
           project_name: "example-package"
           source_docs_dir: "./example-docs"
+          # Optional: Specify a specific SSH key fingerprint to use for git push
+          # ssh_key_fingerprint: "SHA256:EXAMPLE00000000000000000000000000000000000"
 ```
 
 ### Handling Static Files
@@ -128,7 +131,7 @@ Clones the target documentation repository to `~/target_repo`.
 
 ---
 
-### `commit_and_push`
+### `commit_and_push_to_target`
 
 #### Description
 
@@ -136,7 +139,9 @@ Commits and pushes the updated documentation to the target repository.
 
 #### Parameters
 
-None
+| Parameter    | Type   | Description                                          |
+|--------------|--------|------------------------------------------------------|
+| `ssh_key_fingerprint`| String | The fingerprint of the SSH key to use for git push operations. Optional. |
 
 ---
 

@@ -1,7 +1,21 @@
 description: >
   "Commits and pushes the updated documentation to the docs repository."
 
+parameters:
+  ssh_key_fingerprint:
+    type: string
+    default: ""
+    description: "The SSH key fingerprint to use for git push operations"
+
 steps:
+  - when:
+      condition:
+        not:
+          equal: [ "", << parameters.ssh_key_fingerprint >> ]
+      steps:
+        - add_ssh_keys:
+            fingerprints:
+              - << parameters.ssh_key_fingerprint >>
   - run:
       name: Commit and push to target repository
       command: <<include(scripts/commit_and_push_to_target.sh)>>

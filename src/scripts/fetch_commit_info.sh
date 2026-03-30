@@ -15,7 +15,7 @@ FetchCommitInfo() {
   COMMIT_HASH=$(git rev-parse HEAD || { echo "Fetching commit hash failed" >&2 ; exit 1; })
   echo "COMMIT_HASH: $COMMIT_HASH" >&2
 
-  PR_NUMBER=$(echo "$COMMIT_MESSAGE" | grep -oP '(Merge pull request #\K\d+)|(\(#\K\d+\))' || true)
+  PR_NUMBER=$(echo "$COMMIT_MESSAGE" | grep -oP '(Merge pull request #\K\d+)|(\(#\K\d+(?=\)))' || true)
   PR_NUMBER=${PR_NUMBER:-""}
 
 

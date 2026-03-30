@@ -30,8 +30,8 @@ ValidateAndExtractRepoInfo() {
 
   # Export extracted organization and repository name as environment variables
   {
-    echo "export GITHUB_ORG=\"${ORG}\""; \
-    echo "export GITHUB_REPO=\"${REPO}\""; \
+    printf 'export GITHUB_ORG=%q\n' "$ORG"
+    printf 'export GITHUB_REPO=%q\n' "$REPO"
   } >> "$BASH_ENV"
 }
 

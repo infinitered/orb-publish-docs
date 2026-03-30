@@ -25,7 +25,7 @@ NormalizeRepoURL() {
 
 
 
-  echo "export NORMALIZED_REPO_URL=\"${NORMALIZED_REPO_URL}\"" >> "$BASH_ENV"
+  printf 'export NORMALIZED_REPO_URL=%q\n' "$NORMALIZED_REPO_URL" >> "$BASH_ENV"
 }
 
 # Only call the functions if not in a Bats test environment

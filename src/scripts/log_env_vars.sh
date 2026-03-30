@@ -11,18 +11,18 @@ TARGET_REPO_DIRECTORY=$(eval echo "${CIRCLE_WORKING_DIRECTORY}/${TARGET_REPO_DIR
 
 {
   # Set environment variables for subsequent steps
-  echo "export FULL_SOURCE_DOCS_PATH=\"${FULL_SOURCE_DOCS_PATH}\""
-  echo "export FULL_TARGET_DOCS_PATH=\"${FULL_TARGET_DOCS_PATH}\""
-  echo "export SOURCE_REPO_DIRECTORY=\"${SOURCE_REPO_DIRECTORY}\""
-  echo "export TARGET_REPO_DIRECTORY=\"${TARGET_REPO_DIRECTORY}\""
-  echo "export DESCRIPTION=\"${DESCRIPTION}\""
-  echo "export GIT_EMAIL=\"${GIT_EMAIL}\""
-  echo "export GIT_USERNAME=\"${GIT_USERNAME}\""
-  echo "export LABEL=\"${LABEL}\""
-  echo "export PROJECT_NAME=\"${PROJECT_NAME}\""
-  echo "export SOURCE_DOCS_DIR=\"${SOURCE_DOCS_DIR}\""
-  echo "export TARGET_REPO=\"${TARGET_REPO}\""
-  echo "export SSH_KEY_FINGERPRINT=\"${SSH_KEY_FINGERPRINT}\""
+  printf 'export FULL_SOURCE_DOCS_PATH=%q\n' "$FULL_SOURCE_DOCS_PATH"
+  printf 'export FULL_TARGET_DOCS_PATH=%q\n' "$FULL_TARGET_DOCS_PATH"
+  printf 'export SOURCE_REPO_DIRECTORY=%q\n' "$SOURCE_REPO_DIRECTORY"
+  printf 'export TARGET_REPO_DIRECTORY=%q\n' "$TARGET_REPO_DIRECTORY"
+  printf 'export DESCRIPTION=%q\n' "$DESCRIPTION"
+  printf 'export GIT_EMAIL=%q\n' "$GIT_EMAIL"
+  printf 'export GIT_USERNAME=%q\n' "$GIT_USERNAME"
+  printf 'export LABEL=%q\n' "$LABEL"
+  printf 'export PROJECT_NAME=%q\n' "$PROJECT_NAME"
+  printf 'export SOURCE_DOCS_DIR=%q\n' "$SOURCE_DOCS_DIR"
+  printf 'export TARGET_REPO=%q\n' "$TARGET_REPO"
+  printf 'export SSH_KEY_FINGERPRINT=%q\n' "$SSH_KEY_FINGERPRINT"
 } >> "$BASH_ENV"
 
 # Log Environment Variables

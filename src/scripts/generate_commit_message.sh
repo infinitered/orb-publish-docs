@@ -36,10 +36,10 @@ GenerateCommitMessage() {
 
   # Export variables
   {
-    echo "export COMMIT_MESSAGE=\"${COMMIT_MESSAGE}\""
-    echo "export COMMIT_HASH=\"${COMMIT_HASH}\""
-    echo "export PR_NUMBER=\"${PR_NUMBER}\""
-    echo "export FINAL_COMMIT_MESSAGE=\"${FINAL_COMMIT_MESSAGE}\""
+    printf 'export COMMIT_MESSAGE=%q\n' "$COMMIT_MESSAGE"
+    printf 'export COMMIT_HASH=%q\n' "$COMMIT_HASH"
+    printf 'export PR_NUMBER=%q\n' "$PR_NUMBER"
+    printf 'export FINAL_COMMIT_MESSAGE=%q\n' "$FINAL_COMMIT_MESSAGE"
   } >> "$BASH_ENV"
 
   # Log environment variables

@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x  # Enable debugging output
 
 ChangeToSourceRepoDirectory() {
   echo "Changing directory to $SOURCE_REPO_DIRECTORY" >&2

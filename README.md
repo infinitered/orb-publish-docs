@@ -12,6 +12,8 @@
 This orb automates the process of merging Docusaurus documentation from multiple repositories into a single target
 repository.
 
+Built and maintained by [Infinite Red](https://infinite.red), a U.S.-based web and mobile development company.
+
 ## What It Does
 
 1. **Clone Target Repository**: Clones the target Docusaurus documentation repository to the CI environment.
